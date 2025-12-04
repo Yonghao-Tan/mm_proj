@@ -1,3 +1,0 @@
-rm -rf work outputs reports alib-52
-rm *.log
-rm *.svf
