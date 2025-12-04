@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="SPU_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="SPU_tb" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="124167fs"></ZoomStartTime>
+      <ZoomEndTime time="819168fs"></ZoomEndTime>
+      <Cursor1Time time="240000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="195"></NameColumnWidth>
+      <ValueColumnWidth column_width="86"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="16" />
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/x_sum" type="array">
+      <obj_property name="ElementShortName">x_sum[16:0]</obj_property>
+      <obj_property name="ObjectShortName">x_sum[16:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/x_mean" type="array">
+      <obj_property name="ElementShortName">x_mean[7:0]</obj_property>
+      <obj_property name="ObjectShortName">x_mean[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/x_mean_long" type="array">
+      <obj_property name="ElementShortName">x_mean_long[16:0]</obj_property>
+      <obj_property name="ObjectShortName">x_mean_long[16:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/test_x_mean_divider_gen/numer" type="array">
+      <obj_property name="ElementShortName">numer[15:0]</obj_property>
+      <obj_property name="ObjectShortName">numer[15:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/test_x_mean_divider_gen/denom" type="array">
+      <obj_property name="ElementShortName">denom[10:0]</obj_property>
+      <obj_property name="ObjectShortName">denom[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/test_x_mean_divider_gen/quotient" type="array">
+      <obj_property name="ElementShortName">quotient[15:0]</obj_property>
+      <obj_property name="ObjectShortName">quotient[15:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">SIGNEDFIXEDPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">0</obj_property>
+      <obj_property name="radix_otherWidth">0</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/ln_state" type="array">
+      <obj_property name="ElementShortName">ln_state[2:0]</obj_property>
+      <obj_property name="ObjectShortName">ln_state[2:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/sum_cnt" type="array">
+      <obj_property name="ElementShortName">sum_cnt[12:0]</obj_property>
+      <obj_property name="ObjectShortName">sum_cnt[12:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/sum_div_cnt" type="array">
+      <obj_property name="ElementShortName">sum_div_cnt[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sum_div_cnt[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/test_x_square_sum_mean_divider_gen/numer" type="array">
+      <obj_property name="ElementShortName">numer[23:0]</obj_property>
+      <obj_property name="ObjectShortName">numer[23:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/test_x_square_sum_mean_divider_gen/denom" type="array">
+      <obj_property name="ElementShortName">denom[10:0]</obj_property>
+      <obj_property name="ObjectShortName">denom[10:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/test_x_square_sum_mean_divider_gen/quotient" type="array">
+      <obj_property name="ElementShortName">quotient[23:0]</obj_property>
+      <obj_property name="ObjectShortName">quotient[23:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/x_square_sum" type="array">
+      <obj_property name="ElementShortName">x_square_sum[24:0]</obj_property>
+      <obj_property name="ObjectShortName">x_square_sum[24:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/x_mean_square" type="array">
+      <obj_property name="ElementShortName">x_mean_square[15:0]</obj_property>
+      <obj_property name="ObjectShortName">x_mean_square[15:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/x_square_mean_long" type="array">
+      <obj_property name="ElementShortName">x_square_mean_long[24:0]</obj_property>
+      <obj_property name="ObjectShortName">x_square_mean_long[24:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_LayerNorm/u_LayerNorm_Block_0/x_square_mean" type="array">
+      <obj_property name="ElementShortName">x_square_mean[15:0]</obj_property>
+      <obj_property name="ObjectShortName">x_square_mean[15:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+</wave_config>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="SPU_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="SPU_tb" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="262467fs"></ZoomStartTime>
+      <ZoomEndTime time="367668fs"></ZoomEndTime>
+      <Cursor1Time time="320217fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="315"></NameColumnWidth>
+      <ValueColumnWidth column_width="109"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="5" />
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_spu_ln_top/finish_token_cnt" type="array">
+      <obj_property name="ElementShortName">finish_token_cnt[12:0]</obj_property>
+      <obj_property name="ObjectShortName">finish_token_cnt[12:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_spu_ln_top/ln_state" type="array">
+      <obj_property name="ElementShortName">ln_state[2:0]</obj_property>
+      <obj_property name="ObjectShortName">ln_state[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_spu_sm_top/u_spu_sm_block_0/u_spu_sm_lnu/dataIn" type="array">
+      <obj_property name="ElementShortName">dataIn[22:0]</obj_property>
+      <obj_property name="ObjectShortName">dataIn[22:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">UNSIGNEDFIXEDPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">12</obj_property>
+      <obj_property name="radix_otherWidth">0</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_spu_sm_top/u_spu_sm_block_0/u_spu_sm_lnu/u_spu_sm_lnu_lod/dataIn" type="array">
+      <obj_property name="ElementShortName">dataIn[13:0]</obj_property>
+      <obj_property name="ObjectShortName">dataIn[13:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_Special_PU/u_spu_sm_top/u_spu_sm_block_0/u_spu_sm_lnu/u_spu_sm_lnu_lod/dataOut" type="array">
+      <obj_property name="ElementShortName">dataOut[4:0]</obj_property>
+      <obj_property name="ObjectShortName">dataOut[4:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+</wave_config>

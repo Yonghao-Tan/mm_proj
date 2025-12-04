@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Vivado v2019.2 (64-bit)
+# SW Build 2708876 on Wed Nov  6 21:40:23 MST 2019
+# IP Build 2700528 on Thu Nov  7 00:09:20 MST 2019
+# Start of session at: Wed Oct 18 15:19:38 2023
+# Process ID: 39484
+# Current directory: D:/OneDrive - HKUST Connect/ACCESS/Special_PU/Special_PU.runs/synth_1
+# Command line: vivado.exe -log Special_PU.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source Special_PU.tcl
+# Log file: D:/OneDrive - HKUST Connect/ACCESS/Special_PU/Special_PU.runs/synth_1/Special_PU.vds
+# Journal file: D:/OneDrive - HKUST Connect/ACCESS/Special_PU/Special_PU.runs/synth_1\vivado.jou
+#-----------------------------------------------------------
+source Special_PU.tcl -notrace

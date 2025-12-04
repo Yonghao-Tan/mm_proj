@@ -1,0 +1,162 @@
+####*********************************************************************************************************************/
+#### Software       : TSMC MEMORY COMPILER tsn28hpcpuhddpsram_2012.02.00.d.170a						*/
+#### Technology     : TSMC 28nm CMOS LOGIC High Performance Compact Mobile 1P10M HKMG CU_ELK 0.9V				*/
+#### Memory Type    : TSMC 28nm High Performance Compact Mobile Ultra High Density Dual Port SRAM with d127 bit cell SVT Periphery */
+#### Library Name   : tsdn28hpcpuhdb512x128m4m (user specify : TSDN28HPCPUHDB512X128M4M)				*/
+#### Library Version: 170a												*/
+#### Generated Time : 2024/01/10, 17:23:40										*/
+####*********************************************************************************************************************/
+####															*/
+#### STATEMENT OF USE													*/
+####															*/
+#### This information contains confidential and proprietary information of TSMC.					*/
+#### No part of this information may be reproduced, transmitted, transcribed,						*/
+#### stored in a retrieval system, or translated into any human or computer						*/
+#### language, in any form or by any means, electronic, mechanical, magnetic,						*/
+#### optical, chemical, manual, or otherwise, without the prior written permission					*/
+#### of TSMC. This information was prepared for informational purpose and is for					*/
+#### use by TSMC's customers only. TSMC reserves the right to make changes in the					*/
+#### information at any time and without notice.									*/
+####															*/
+####*********************************************************************************************************************/
+
+1. Area
+
+Pre-shrink (dimensions in GDS database)
+-----------------------------------------------------------------------
+|          Width(um)	|         Height(um)	|       Area (um^2)	|
+-----------------------------------------------------------------------
+|          80.4750	|          317.6900	|         25566.1027	|
+-----------------------------------------------------------------------
+
+
+
+2. Timing Specification
+   2.1 Timing Protocol (Refer to the waveforms in the databook)
+   2.2 SRAM timing:(Fast, 0.9900, 125.0000 deg.)
+
+Parameter                          Symbol      Param. Value (ns)
+---------                          ------      ------------
+Cycle time                         tcyc            0.7372
+Clock high                         tckh            0.0935
+Clock low                          tckl            0.0935
+Access time of port-A              tcda            0.3585
+Access time of port-B              tcdb            0.7173
+Output data hold time of port-A    tholda          0.2469
+Output data hold time of port-B    tholdb          0.5425
+
+Address setup of port-A            taas            0.0529
+Address hold of port-A             taah            0.0619
+Chip enable setup of port-A        tcas            0.0796
+Chip enable hold of port-A         tcah            0.0788
+Write enable setup of port-A       twas            0.0753
+Write enable hold of port-A        twah            0.0611
+Data setup of port-A               tdas            0.0100
+Data hold of port-A                tdah            0.0969
+
+Address setup of port-B            tabs            0.0100
+Address hold of port-B             tabh            0.0788
+Chip enable setup of port-B        tcbs            0.0796
+Chip enable hold of port-B         tcbh            0.0788
+Write enable setup of port-B       twbs            0.0100
+Write enable hold of port-B        twbh            0.0788
+Data setup of port-B               tdbs            0.0100
+Data hold of port-B                tdbh            0.1347
+
+
+
+---------                          ------      ------------
+
+3. Pin capacitance
+
+Pin             		Value (pF)
+---------       		------------------
+CLK				0.0108
+AA[8:0]			0.0013
+AB[8:0]			0.0013
+DA[127:0]			0.0018
+DB[127:0]			0.0011
+CEBA				0.0028
+CEBB				0.0016
+WEBA				0.0018
+WEBB				0.0010
+WTSEL[1:0]			0.0006
+RTSEL[1:0]			0.0012
+PTSEL[1:0]			0.0006
+
+4. Power
+
+The tables below provide static and dynamic power information for the
+different operational modes of the memory.  The total average macro power will
+be the sum of the static component (namely, leakage) and the dynamic components.
+Although the data provided in this document mainly pertains to a specific
+process, voltage, and temperature (PVT) condition based on user selection, the
+leakage at the worst case PVT has also been provided for reference.
+
+
+4.1 Static Power
+
+Functional Mode                                  						Value 
+--------------------------                     	 	------------------------------------------------------------------
+								Total		Periphery		Cell Array
+Leakage Current						  4000.6600 (uA)	  3497.4680 (uA)	   503.1920 (uA)
+
+4.2 Dynamic Power - Average  
+
+Functional Mode (Total)                            	     Value
+--------------------------                      	    ----------------
+A-port Write and B-port wirte                  		    39.1910 (uA/MHz)
+A-port read and B-port read                  		    44.2391 (uA/MHz)
+A-port write and B-port read                  		    44.3775 (uA/MHz)
+A-port read and B-port write                  		    42.8178 (uA/MHz)
+
+A-port Write and B-port deselect                	    20.3465 (uA/MHz)
+A-port read and B-port deselect                 	    22.1461 (uA/MHz)
+A-port deselect and B-port write                  	    23.8864 (uA/MHz)
+A-port deselect and B-port read                  	    20.5963 (uA/MHz)
+
+Standby*                                   		     1.5445 (uA/MHz)  
+
+* Standby Mode = memory is disabled by CEBA and CEBB pin, CLK, address, data, and bit
+write pins maintain 50% activity.
+
+4.2.1  The above values assume 50% activity, which is typically defined as 1/2
+the bus pins changing along with the relevant control pins, with NO load
+on the output pins (Q).
+4.2.2  For more event specific power or pin/bus contribution information, see
+the Dynamic Power breakout table below.
+4.2.3  No load on outputs (Q).
+
+
+
+4.3 Dynamic Power - Breakout per pin
+
+Pins                                                 Value
+------------------------                             ----------------
+CLK - A-port Write and B-port Write            	    37.6659 (uA/MHz)
+CLK - A-port Write and B-port Read            	    41.3708 (uA/MHz)
+CLK - A-port Read and B-port Write            	    40.1086 (uA/MHz)
+CLK - A-port Read and B-port Read            	    40.0484 (uA/MHz)
+CLK - A-port Deselect and B-port Write         	    20.0435 (uA/MHz)
+CLK - A-port Deselect and B-port Read          	    21.8520 (uA/MHz)
+CLK - A-port Read and B-port Deselect          	    19.9897 (uA/MHz)
+CLK - A-port Write and B-port Deselect         	    19.3741 (uA/MHz)
+CLK - A-port Deselect and B-port Deselect            0.0193 (uA/MHz)
+CEBA                                       	     0.0195 (uA/MHz)
+CEBB                                       	     0.0141 (uA/MHz)
+WEBA                                       	     0.0449 (uA/MHz)
+WEBB                                       	     0.0029 (uA/MHz)
+
+Buses                                                Value (per pin)
+------------------------                             ----------------
+QA[127:0]					     0.0185 (uA/MHz)
+AA[8:0]					     0.0219 (uA/MHz)
+DA[127:0]					     0.0127 (uA/MHz)
+
+QB[127:0]					     0.0182 (uA/MHz)
+AB[8:0]					     0.0095 (uA/MHz)
+DB[127:0]					     0.0077 (uA/MHz)
+
+WTSEL[1:0]                                           0.0219 (uA/MHz) 
+RTSEL[1:0]                                           0.0219 (uA/MHz) 
+PTSEL[1:0]                                           0.0219 (uA/MHz) 

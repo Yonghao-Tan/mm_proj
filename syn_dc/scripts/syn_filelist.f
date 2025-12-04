@@ -1,0 +1,13 @@
+../rtl/special_pu.v
+../rtl/spu_ln_top.v
+../rtl/spu_sm_top.v
+../rtl/spu_sm_block.v
+../rtl/spu_ln_block.v
+../rtl/spu_divider_unsign.v
+../rtl/spu_divider_sign.v
+../rtl/spu_ln_sqrt.v
+../rtl/spu_sm_expu_approx.v
+../rtl/spu_sm_expu_approx_lut.v
+../rtl/spu_sm_expu_pwl.v
+../rtl/spu_sm_xmax.v
+../rtl/spu_sm_addertree.v

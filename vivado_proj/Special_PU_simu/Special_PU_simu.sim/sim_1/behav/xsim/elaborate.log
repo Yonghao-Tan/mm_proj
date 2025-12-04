@@ -1,0 +1,69 @@
+Vivado Simulator 2019.2
+Copyright 1986-1999, 2001-2019 Xilinx, Inc. All Rights Reserved.
+Running: D:/Xilinx/Vivado/2019.2/bin/unwrapped/win64.o/xelab.exe -wto 1c33de05be854e95ad525632cf7e0a5e --incr --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot SPU_tb_behav xil_defaultlib.SPU_tb xil_defaultlib.glbl -log elaborate.log 
+Using 2 slave threads.
+Starting static elaboration
+Pass Through NonSizing Optimizer
+WARNING: [VRFC 10-5021] port 'cfg_spubuf_ptsel' is not connected on this instance [D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/SPU_tb.v:170]
+Completed static elaboration
+Starting simulation data flow analysis
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/fpga_sdp_ram.sv" Line 6. Module fpga_sdp_ram(RAM_WIDTH=128,RAM_PERFORMANCE="LOW_LATENCY") doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/fpga_sdp_ram.sv" Line 6. Module fpga_sdp_ram(RAM_WIDTH=128,RAM_PERFORMANCE="LOW_LATENCY") doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/fpga_sdp_ram.sv" Line 6. Module fpga_sdp_ram(RAM_WIDTH=128,RAM_PERFORMANCE="LOW_LATENCY") doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/fpga_sdp_ram.sv" Line 6. Module fpga_sdp_ram(RAM_WIDTH=128,RAM_PERFORMANCE="LOW_LATENCY") doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/fpga_sdp_ram.sv" Line 6. Module fpga_sdp_ram(RAM_WIDTH=128,RAM_PERFORMANCE="LOW_LATENCY") doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/fpga_sdp_ram.sv" Line 6. Module fpga_sdp_ram(RAM_WIDTH=128,RAM_PERFORMANCE="LOW_LATENCY") doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/fpga_sdp_ram.sv" Line 6. Module fpga_sdp_ram(RAM_WIDTH=128,RAM_PERFORMANCE="LOW_LATENCY") doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/fpga_sdp_ram.sv" Line 6. Module fpga_sdp_ram(RAM_WIDTH=128,RAM_PERFORMANCE="LOW_LATENCY") doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 1. Module FeatureMap_Bank_0_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 8247. Module FeatureMap_Bank_1_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 16493. Module FeatureMap_Bank_2_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 24739. Module FeatureMap_Bank_3_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 32985. Module FeatureMap_Bank_4_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 41231. Module FeatureMap_Bank_5_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 49477. Module FeatureMap_Bank_6_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 57723. Module FeatureMap_Bank_7_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 65969. Module FeatureMap_Bank_8_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 74215. Module FeatureMap_Bank_9_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 82461. Module FeatureMap_Bank_10_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 90707. Module FeatureMap_Bank_11_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 98953. Module FeatureMap_Bank_12_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 107199. Module FeatureMap_Bank_13_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 115445. Module FeatureMap_Bank_14_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v" Line 123691. Module FeatureMap_Bank_15_default doesn't have a timescale but at least one module in design has a timescale.
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module xil_defaultlib.spu_ln_sqrt(DW=24)
+Compiling module xil_defaultlib.spu_divider_unsign(DIVISOR_DW=12...
+Compiling module xil_defaultlib.spu_ln_block_default
+Compiling module xil_defaultlib.spu_ln_top(CACHE_DATA_WIDTH=1024...
+Compiling module xil_defaultlib.spu_sm_xmax
+Compiling module xil_defaultlib.spu_sm_expu_pwl
+Compiling module xil_defaultlib.spu_sm_expu_approx
+Compiling module xil_defaultlib.spu_sm_expu_approx_lut
+Compiling module xil_defaultlib.spu_sm_addertree
+Compiling module xil_defaultlib.spu_divider_unsign(DIVISOR_DW=20...
+Compiling module xil_defaultlib.spu_sm_block
+Compiling module xil_defaultlib.spu_sm_top(CACHE_DATA_WIDTH=1024...
+Compiling module xil_defaultlib.fpga_sdp_ram(RAM_WIDTH=128,RAM_P...
+Compiling module xil_defaultlib.special_pu_default
+Compiling module xil_defaultlib.FeatureMap_Bank_0_default
+Compiling module xil_defaultlib.FeatureMap_Bank_1_default
+Compiling module xil_defaultlib.FeatureMap_Bank_2_default
+Compiling module xil_defaultlib.FeatureMap_Bank_3_default
+Compiling module xil_defaultlib.FeatureMap_Bank_4_default
+Compiling module xil_defaultlib.FeatureMap_Bank_5_default
+Compiling module xil_defaultlib.FeatureMap_Bank_6_default
+Compiling module xil_defaultlib.FeatureMap_Bank_7_default
+Compiling module xil_defaultlib.FeatureMap_Bank_8_default
+Compiling module xil_defaultlib.FeatureMap_Bank_9_default
+Compiling module xil_defaultlib.FeatureMap_Bank_10_default
+Compiling module xil_defaultlib.FeatureMap_Bank_11_default
+Compiling module xil_defaultlib.FeatureMap_Bank_12_default
+Compiling module xil_defaultlib.FeatureMap_Bank_13_default
+Compiling module xil_defaultlib.FeatureMap_Bank_14_default
+Compiling module xil_defaultlib.FeatureMap_Bank_15_default
+Compiling module xil_defaultlib.FeatureMap_Buffer
+Compiling module xil_defaultlib.SPU_tb
+Compiling module xil_defaultlib.glbl
+Built simulation snapshot SPU_tb_behav

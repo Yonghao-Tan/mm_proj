@@ -1,0 +1,21 @@
+0.6
+2019.2
+Nov  6 2019
+21:57:16
+D:/RTL_projs/Special_PU_proj_mm/rtl/fpga_sdp_ram.sv,1704106500,systemVerilog,,,,fpga_sdp_ram,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/special_pu.v,1706787804,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/spu_divider_unsign.v,,special_pu,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/spu_divider_unsign.v,1705640334,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/spu_ln_block.v,,spu_divider_unsign,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/spu_ln_block.v,1710152770,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/spu_ln_sqrt.v,,spu_ln_block,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/spu_ln_sqrt.v,1698562690,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/spu_ln_top.v,,spu_ln_sqrt,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/spu_ln_top.v,1706686720,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_addertree.v,,spu_ln_top,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_addertree.v,1701775746,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_block.v,,spu_sm_addertree,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_block.v,1710152270,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_expu_approx.v,,spu_sm_block,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_expu_approx.v,1704261192,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_expu_approx_lut.v,,spu_sm_expu_approx,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_expu_approx_lut.v,1704627002,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_expu_pwl.v,,spu_sm_expu_approx_lut,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_expu_pwl.v,1704627610,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_top.v,,spu_sm_expu_pwl,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_top.v,1710152294,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_xmax.v,,spu_sm_top,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_xmax.v,1698505166,verilog,,,,spu_sm_xmax,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/verification/FeatureMap_Bank_all.v,1764829518,verilog,,D:/RTL_projs/Special_PU_proj_mm/verification/FeatureMap_Buffer.v,,FeatureMap_Bank_0;FeatureMap_Bank_1;FeatureMap_Bank_10;FeatureMap_Bank_11;FeatureMap_Bank_12;FeatureMap_Bank_13;FeatureMap_Bank_14;FeatureMap_Bank_15;FeatureMap_Bank_2;FeatureMap_Bank_3;FeatureMap_Bank_4;FeatureMap_Bank_5;FeatureMap_Bank_6;FeatureMap_Bank_7;FeatureMap_Bank_8;FeatureMap_Bank_9,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/verification/FeatureMap_Buffer.v,1698140360,verilog,,D:/RTL_projs/Special_PU_proj_mm/rtl/special_pu.v,,FeatureMap_Buffer,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/verification/SPU_tb.v,1764829518,verilog,,,,SPU_tb,,,,,,,,
+D:/RTL_projs/Special_PU_proj_mm/vivado_proj/Special_PU/Special_PU.sim/sim_1/behav/xsim/glbl.v,1573089660,verilog,,,,glbl,,,,,,,,

@@ -1,0 +1,3 @@
+mkdir reports
+mkdir outputs
+dc_shell -f ./scripts/syn_topdown.tcl | tee syn.log

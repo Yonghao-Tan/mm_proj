@@ -1,0 +1,48 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/verification/FeatureMap_Bank_all.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_0
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_1
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_2
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_3
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_4
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_5
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_6
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_7
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_8
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_9
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_10
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_11
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_12
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_13
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_14
+INFO: [VRFC 10-311] analyzing module FeatureMap_Bank_15
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/verification/FeatureMap_Buffer.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module FeatureMap_Buffer
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/special_pu.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module special_pu
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/spu_divider_unsign.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module spu_divider_unsign
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/spu_ln_block.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module spu_ln_block
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/spu_ln_sqrt.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module spu_ln_sqrt
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/spu_ln_top.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module spu_ln_top
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_addertree.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module spu_sm_addertree
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_block.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module spu_sm_block
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_expu_approx.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module spu_sm_expu_approx
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_expu_approx_lut.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module spu_sm_expu_approx_lut
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_expu_pwl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module spu_sm_expu_pwl
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_top.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module spu_sm_top
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/rtl/spu_sm_xmax.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module spu_sm_xmax
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/RTL_projs/Special_PU_proj_mm/verification/SPU_tb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module SPU_tb
+INFO: [VRFC 10-2458] undeclared symbol spu_end, assumed default net type wire [D:/RTL_projs/Special_PU_proj_mm/verification/SPU_tb.v:176]
+WARNING: [VRFC 10-3380] identifier 'tb_rd_cnt' is used before its declaration [D:/RTL_projs/Special_PU_proj_mm/verification/SPU_tb.v:150]
+WARNING: [VRFC 10-3380] identifier 'tb_rd_en' is used before its declaration [D:/RTL_projs/Special_PU_proj_mm/verification/SPU_tb.v:151]

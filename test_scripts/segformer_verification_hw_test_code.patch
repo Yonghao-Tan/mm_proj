@@ -1,0 +1,353 @@
+Binary files segformer_verification/input.npy and segformer_verification_hw/input.npy differ
+diff -ruN -x '*.pyc' -x 'events.out*' -x '*.png' segformer_verification/Makefile segformer_verification_hw/Makefile
+--- segformer_verification/Makefile	2024-02-19 18:22:06.000000000 +0000
++++ segformer_verification_hw/Makefile	2024-02-23 06:05:33.762018474 +0000
+@@ -13,7 +13,7 @@
+ 	--crop_size_w 480 \
+ 	--save_val_results \
+ 	--val_batch_size 1 \
+-	--worker 16 \
++	--worker 1 \
+ 	--data_root ./datasets/data/cityscapes \
+ 	--ckpt ./checkpoints/segformer/quan_mit_b0_a_512/quan_mit_b0_a_512_baseline_pwl.pth \
+ 	--test_only \
+diff -ruN -x '*.pyc' -x 'events.out*' -x '*.png' segformer_verification/models/efficientvit/quan_segformer_backbone.py segformer_verification_hw/models/efficientvit/quan_segformer_backbone.py
+--- segformer_verification/models/efficientvit/quan_segformer_backbone.py	2024-02-19 18:22:14.000000000 +0000
++++ segformer_verification_hw/models/efficientvit/quan_segformer_backbone.py	2024-02-23 03:03:08.036255175 +0000
+@@ -44,14 +44,16 @@
+         seg_point_scale = round_to_nearest_bits_torch(seg_point_scale, decimal_bit)
+         seg_point_scale = seg_point_scale / scale
+         pwl_func = torch.zeros_like(input).to(device)
+-        mask = input.lt(seg_point_scale[0])
++        mask = input.le(seg_point_scale[0])
+         pwl_func = torch.where(mask, intercept_scale[0] + coeff_scale[0] * input, pwl_func)
+         for i in range(1, len(seg_point_scale)):
+-            mask = input.ge(seg_point_scale[i-1]) & input.lt(seg_point_scale[i])
++            mask = input.gt(seg_point_scale[i-1]) & input.le(seg_point_scale[i])
+             pwl_func = torch.where(mask, intercept_scale[i] + coeff_scale[i] * input, pwl_func)
+-        mask = input.ge(seg_point_scale[-1])
++        mask = input.gt(seg_point_scale[-1])
+         pwl_func = torch.where(mask, intercept_scale[-1] + coeff_scale[-1] * input, pwl_func)
+-        return (pwl_func * scale - func(input *scale)).detach() + func(input * scale), seg_point_scale
++        # insert -128 infront of seg_point_scale
++        seg_point_scale = torch.cat([torch.tensor([-128.0]).to(device), seg_point_scale])
++        return (pwl_func * scale - func(input *scale)).detach() + func(input * scale), seg_point_scale, coeff_scale, intercept_scale
+     
+ class Mlp(nn.Module):
+     def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.GELU, drop=0.):
+@@ -98,7 +100,7 @@
+         B, H, W, C = x.shape
+         # x, scale_x = self.quan_before_input_norm(x)
+         scale_x = scale_input
+-        if self.training or save_access_onnx() or self.quan_after_input_norm.initialized_alpha == 0:
++        if self.training  or self.quan_after_input_norm.initialized_alpha == 0: #or save_access_onnx()
+             x = F.layer_norm(x / scale_x, x.shape[-1:], eps=2**-8)
+             ln_out, ln_s_out = self.quan_after_input_norm(x)
+         else:
+@@ -122,14 +124,17 @@
+         x = self.fc1(x, scale_x)
+         x = self.dwconv(x, H, W)
+         x, scale_x = self.quan_before_act(x)
+-        act, seg_point_scale = self.gelu_pwl(x / scale_x, scale_x)
++        act, seg_point_scale, coeff_scale, intercept_scale = self.gelu_pwl(x / scale_x, scale_x)
+         if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
+             slopes_scale = torch.tensor(1/64.0).to(x.device)
+             global_idx = get_next_global_idx()
+             out_scale = torch.pow(2, torch.round(torch.log2(self.fc2.conv.lsq_a.s.to(x.device))))
+-            np.savez("npz_logging/" + str(global_idx) + "_pwl", input_scale=scale_x.cpu().numpy(), input=x.cpu().numpy(), output=act.cpu().numpy(), output_scale=(out_scale/slopes_scale).cpu().numpy(),
+-                     slopes=(self.gelu_pwl.coeff/slopes_scale).cpu().numpy(), intercepts=(self.gelu_pwl.intercept/(slopes_scale*scale_x)).cpu().numpy(), change_pts=seg_point_scale.cpu().numpy(),
+-                     slopes_scale=slopes_scale.cpu().numpy(), intercepts_scale=scale_x.cpu().numpy())
++            # np.savez("npz_logging/" + str(global_idx) + "_pwl", input_scale=scale_x.cpu().numpy(), input=x.cpu().numpy(), output=act.cpu().numpy(), output_scale=(out_scale/slopes_scale).cpu().numpy(),
++            #          slopes=(self.gelu_pwl.coeff/slopes_scale).cpu().numpy(), intercepts=(self.gelu_pwl.intercept/(slopes_scale*scale_x)).cpu().numpy(), change_pts=seg_point_scale.cpu().numpy(),
++            #          slopes_scale=slopes_scale.cpu().numpy(), intercepts_scale=scale_x.cpu().numpy())
++            np.savez("npz_logging/" + str(global_idx) + "_pwl", input_scale=scale_x.cpu().numpy(), input=x.cpu().numpy(), output=act.cpu().numpy(), output_scale=(out_scale).cpu().numpy(),
++                     slopes=(coeff_scale).cpu().numpy(), intercepts=(intercept_scale*scale_x).cpu().numpy(), change_pts=(seg_point_scale * scale_x).cpu().numpy(),
++                     slopes_scale=slopes_scale.cpu().numpy(), intercepts_scale=(scale_x/scale_x/64).cpu().numpy())
+         x = self.drop(act)
+         x = self.fc2(x)
+         x = x.permute(0, 2, 3, 1)
+@@ -238,7 +243,7 @@
+         B, H, W, C = x.shape
+         # x, scale_x = self.quan_before_input_norm(x)
+         scale_x = scale_input
+-        if self.training or save_access_onnx() or self.quan_after_input_norm.initialized_alpha == 0:
++        if self.training  or self.quan_after_input_norm.initialized_alpha == 0: #or save_access_onnx():
+             x = F.layer_norm(x / scale_x, x.shape[-1:], eps=2**-8)
+             ln_out, ln_s_out = self.quan_after_input_norm(x)
+         else:
+@@ -258,12 +263,13 @@
+         if self.sr_ratio > 1:
+             x = self.sr(x, scale_x)
+             x, scale_after_sr = self.quan_after_sr(x)
++            x_temp = x
+             x = self.sr_pool(x).reshape(B, C, -1).permute(0, 2, 1)
+-            # if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
+-            #     for i, layer in enumerate(self.sr_pool):
+-            #         idx = get_next_global_idx()
+-            #         np.savez("npz_logging/" + str(idx) + "_maxpool", input_scale=scale_after_sr.cpu().numpy(), output_scale=scale_after_sr.cpu().numpy())
+-            if self.training or save_access_onnx() or self.quan_after_sr_norm.initialized_alpha == 0:
++            if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
++                for i, layer in enumerate(self.sr_pool):
++                    idx = get_next_global_idx()
++                    np.savez("npz_logging/" + str(idx) + "_pool", input=x_temp.cpu().numpy(), input_scale=scale_after_sr.cpu().numpy(), output_scale=scale_after_sr.cpu().numpy())
++            if self.training or self.quan_after_sr_norm.initialized_alpha == 0: # or save_access_onnx()
+                 x = F.layer_norm(x / scale_after_sr, x.shape[-1:], eps=2**-8)
+                 ln_out, ln_s_out = self.quan_after_sr_norm(x)
+             else:
+@@ -298,9 +304,9 @@
+         attn_score, sm_s_in = self.quan_attn_scale_new(attn_score)
+         if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
+             idx = get_next_global_idx()
+-            np.savez("npz_logging/" + str(idx) + "_mul", input_scale=scale_attn_qk.cpu().numpy(), output_scale=sm_s_in.cpu().numpy(), slopes_scale=scale_e.cpu().numpy())
++            np.savez("npz_logging/" + str(idx) + "_mul", input=attn_qk_s.cpu().numpy(), input_scale=scale_attn_qk.cpu().numpy(), output=attn_score.cpu().numpy(), output_scale=sm_s_in.cpu().numpy(), slopes_scale=scale_e.cpu().numpy())
+ 
+-        if self.training or save_access_onnx() or self.quan_exp_new.initialized_alpha == 0:
++        if self.training or self.quan_exp_new.initialized_alpha == 0: # or save_access_onnx()
+             attn_max, _ = torch.max(attn_score, dim=-1, keepdim=True)
+             attn_exp = self.q_exp(((attn_score - attn_max) / sm_s_in), sm_s_in) # TODO
+             attn_exp, exp_s_out = self.quan_exp_new(attn_exp)
+@@ -360,12 +366,12 @@
+         self.quan_before_attn = LsqQuantizer4input(bit=self.nbit_a, all_positive=False, per_channel=False)
+         self.quan_before_mlp = LsqQuantizer4input(bit=self.nbit_a, all_positive=False, per_channel=False)
+         self.quan_after_attn = LsqQuantizer4input(
+-                            bit=8,
++                            bit=16,
+                             all_positive=False,
+                             per_channel=False
+                         )
+         self.quan_after_mlp = LsqQuantizer4input(
+-                            bit=8,
++                            bit=16,
+                             all_positive=False,
+                             per_channel=False
+                         )
+@@ -389,7 +395,11 @@
+     def forward(self, x, H, W):
+         res, scale_res = self.quan_before_attn(x)
+         attn_out = self.drop_path(self.attn(res, H, W, scale_res))
+-        attn_out, scale_attn_out = self.quan_after_attn(attn_out)
++        # attn_out, scale_attn_out = self.quan_after_attn(attn_out)
++        if scale_res < self.quan_after_attn.s:
++            attn_out, scale_attn_out = self.quan_after_attn(attn_out, fix_scale = scale_res)
++        else:
++            attn_out, scale_attn_out = self.quan_after_attn(attn_out)
+         x = attn_out + res
+         if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
+             idx = get_next_global_idx()
+@@ -397,11 +407,14 @@
+ 
+         res, scale_res = self.quan_before_mlp(x)
+         mlp_out = self.drop_path(self.mlp(res, H, W, scale_res))
+-        mlp_out, scale_mlp_out = self.quan_after_mlp(mlp_out)
++        if scale_res < self.quan_after_mlp.s:
++            mlp_out, scale_mlp_out = self.quan_after_mlp(mlp_out, fix_scale = scale_res)
++        else:
++            mlp_out, scale_mlp_out = self.quan_after_mlp(mlp_out)
+         x = mlp_out + res
+         if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
+             idx = get_next_global_idx()
+-            np.savez("npz_logging/" + str(idx) + "_add", input1=res.cpu().numpy(), input1_scale=scale_res.cpu().numpy(), input2=mlp_out.cpu().numpy(), input2_scale=scale_mlp_out.cpu().numpy())
++            np.savez("npz_logging/" + str(idx) + "_add", input1=res.cpu().numpy(), input1_scale=scale_res.cpu().numpy(), input2=mlp_out.cpu().numpy(), input2_scale=scale_mlp_out.cpu().numpy(), output=x.cpu().numpy())
+         return x
+ 
+ 
+@@ -456,11 +469,16 @@
+     def forward(self, x, scale_x=None):
+         x = self.proj(x, scale_x)
+         x, scale_x = self.quan_before_norm(x) # quan the result of conv
++        x_temp = x
+         if self.pool: 
+             x = self.proj_pool(x)
++            
++            if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
++                idx = get_next_global_idx()
++                np.savez("npz_logging/" + str(idx) + "_pool", input=x_temp.cpu().numpy(), input_scale=scale_x.cpu().numpy(), output_scale=scale_x.cpu().numpy())
+         B, C, H, W = x.shape
+         x = x.permute(0, 2, 3, 1)
+-        if self.training or save_access_onnx() or self.quan_after_norm.initialized_alpha == 0:
++        if self.training or self.quan_after_norm.initialized_alpha == 0: # or save_access_onnx()
+             x = F.layer_norm(x / scale_x, x.shape[-1:], eps=2**-8) # , eps=2**-8
+             ln_out, ln_s_out = self.quan_after_norm(x) # quan the result of conv / pool
+         else:
+@@ -645,7 +663,7 @@
+         for i, blk in enumerate(self.block1):
+             x = blk(x, H, W)
+         x, scale_x = self.quan_before_norm1(x)
+-        if self.training or save_access_onnx() or self.quan_after_norm1.initialized_alpha == 0:
++        if self.training or self.quan_after_norm1.initialized_alpha == 0: # or save_access_onnx() 
+             x = F.layer_norm(x / scale_x, x.shape[-1:], eps=2**-8) # , eps=2**-8
+             ln_out, ln_s_out = self.quan_after_norm1(x)
+         else:
+@@ -669,7 +687,7 @@
+         for i, blk in enumerate(self.block2):
+             x = blk(x, H, W)
+         x, scale_x = self.quan_before_norm2(x)
+-        if self.training or save_access_onnx() or self.quan_after_norm2.initialized_alpha == 0:
++        if self.training or self.quan_after_norm2.initialized_alpha == 0: # or save_access_onnx()
+             x = F.layer_norm(x / scale_x, x.shape[-1:], eps=2**-8) # , eps=2**-8
+             ln_out, ln_s_out = self.quan_after_norm2(x)
+         else:
+@@ -693,7 +711,7 @@
+         for i, blk in enumerate(self.block3):
+             x = blk(x, H, W)
+         x, scale_x = self.quan_before_norm3(x)
+-        if self.training or save_access_onnx() or self.quan_after_norm3.initialized_alpha == 0:
++        if self.training or self.quan_after_norm3.initialized_alpha == 0: # or save_access_onnx()
+             x = F.layer_norm(x / scale_x, x.shape[-1:], eps=2**-8) # , eps=2**-8
+             ln_out, ln_s_out = self.quan_after_norm3(x)
+         else:
+@@ -717,7 +735,7 @@
+         for i, blk in enumerate(self.block4):
+             x = blk(x, H, W)
+         x, scale_x = self.quan_before_norm4(x)
+-        if self.training or save_access_onnx() or self.quan_after_norm4.initialized_alpha == 0:
++        if self.training or self.quan_after_norm4.initialized_alpha == 0: # or save_access_onnx()
+             x = F.layer_norm(x / scale_x, x.shape[-1:], eps=2**-8) # , eps=2**-8
+             ln_out, ln_s_out = self.quan_after_norm4(x)
+         else:
+diff -ruN -x '*.pyc' -x 'events.out*' -x '*.png' segformer_verification/models/efficientvit/segformer_head.py segformer_verification_hw/models/efficientvit/segformer_head.py
+--- segformer_verification/models/efficientvit/segformer_head.py	2024-02-19 18:22:14.000000000 +0000
++++ segformer_verification_hw/models/efficientvit/segformer_head.py	2024-02-23 07:32:52.639418566 +0000
+@@ -354,16 +354,26 @@
+         n, _, h, w = c4.shape
+ 
+         c4 = self.linear_c4(c4, scale_4)
+-        _c4, scale_before_resize_4 = self.quan_before_resize_4(c4)
+-        _c4 = resize(_c4, size=c1.size()[2:],mode='bilinear',align_corners=False)
++        
++        scale_resize = torch.pow(2, torch.round(torch.log2(self.concat.s)))
++        _c4, scale_before_resize_4 = self.quan_before_resize_4(c4, fix_scale = scale_resize)
++        # _c4, scale_before_resize_4 = self.quan_before_resize_4(c4)
++        # _c4 = resize(_c4, size=c1.size()[2:],mode='bilinear',align_corners=False)
++        
++        _c4 = resize(_c4, scale_factor=2, mode='bilinear',align_corners=False)
++        
++        _c4, scale_before_resize_4 = self.quan_before_resize_4(_c4, fix_scale = scale_resize)
++        # _c4, scale_before_resize_4 = self.quan_before_resize_4(c4)
++        _c4 = resize(_c4, scale_factor=4, mode='bilinear',align_corners=False)
++        
+         if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
+-            scale_resize = torch.pow(2, torch.round(torch.log2(self.concat.s)))
+             idx = get_next_global_idx()
+             np.savez("npz_logging/" + str(idx) + "_resize", input=c4.cpu().numpy(), input_scale=scale_before_resize_4.cpu().numpy(), output=_c4.cpu().numpy(), output_scale=scale_resize.cpu().numpy())
+         # _c4, scale_after_resize_4 = self.quan_after_resize_4(_c4)
+ 
+         c3 = self.linear_c3(c3, scale_3)
+-        _c3, scale_before_resize_3 = self.quan_before_resize_3(c3)
++        _c3, scale_before_resize_3 = self.quan_before_resize_3(c3, fix_scale = scale_resize)
++        # _c3, scale_before_resize_3 = self.quan_before_resize_3(c3)
+         _c3 = resize(_c3, size=c1.size()[2:],mode='bilinear',align_corners=False)
+         if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
+             idx = get_next_global_idx()
+@@ -371,7 +381,8 @@
+         # _c3, scale_after_resize_3 = self.quan_after_resize_3(_c3)
+ 
+         c2 = self.linear_c2(c2, scale_2)
+-        _c2, scale_before_resize_2 = self.quan_before_resize_2(c2)
++        _c2, scale_before_resize_2 = self.quan_before_resize_2(c2, fix_scale = scale_resize)
++        # _c2, scale_before_resize_2 = self.quan_before_resize_2(c2)
+         _c2 = resize(_c2, size=c1.size()[2:],mode='bilinear',align_corners=False)
+         if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
+             idx = get_next_global_idx()
+@@ -393,9 +404,10 @@
+         x = self.dropout(x)
+         x = self.linear_pred(x, scale_before_relu)
+         x, scale_out = self.output_quan(x)
++        np.save("io_logging/output.npy", (x/scale_out).cpu().numpy())
+         if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
+             idx = get_next_global_idx()
+-            np.savez("npz_logging/" + str(idx) + "_output", output_scale=scale_out.cpu().numpy())
++            np.savez("npz_logging/" + str(idx) + "_output", output=x.cpu().numpy(), output_scale=scale_out.cpu().numpy())
+         return x
+ 
+ 
+diff -ruN -x '*.pyc' -x 'events.out*' -x '*.png' segformer_verification/models/nn/lsq.py segformer_verification_hw/models/nn/lsq.py
+--- segformer_verification/models/nn/lsq.py	2024-02-19 18:22:14.000000000 +0000
++++ segformer_verification_hw/models/nn/lsq.py	2024-02-22 02:39:37.387282408 +0000
+@@ -123,7 +123,7 @@
+         # self.initialized_alpha = True # only initialize once, first forward pass
+         self.initialized_alpha.fill_(1) # only initialize once, first forward pass
+         
+-    def forward(self, x, modified_init=True, re_init=False, pr=False, exp=False):
++    def forward(self, x, modified_init=True, re_init=False, pr=False, exp=False, fix_scale=0):
+         # print(x.shape)
+         if self.update == False:
+             if self.initialized_alpha == 0 or re_init:
+@@ -133,6 +133,8 @@
+             print("update mode")
+             self.init_from(x, modified_init=modified_init)
+         alpha = self.s.abs() # TODO   
++        if fix_scale != 0:
++            alpha = fix_scale
+         s_grad_scale = 1.0 / ((self.thd_pos * x.numel()) ** 0.5)
+         s_scale = grad_scale(clip(alpha.to(x.device), torch.tensor(1e-10, device=x.device).float()), s_grad_scale) # TODO, clip
+         
+diff -ruN -x '*.pyc' -x 'events.out*' -x '*.png' segformer_verification/models/nn/quant_lsq.py segformer_verification_hw/models/nn/quant_lsq.py
+--- segformer_verification/models/nn/quant_lsq.py	2024-02-19 18:22:14.000000000 +0000
++++ segformer_verification_hw/models/nn/quant_lsq.py	2024-02-23 07:34:07.191304446 +0000
+@@ -310,7 +310,11 @@
+         weight_integer = weight_integer.to(x.device)
+         weight_scaling_factor = weight_scaling_factor.to(x.device)
+         self.scale_a = self.scale_a.to(x.device)
+-
++        # check if input.npy is exist in path
++        if not os.path.exists("io_logging"):
++            os.makedirs("io_logging")
++        if not os.path.exists("io_logging/input.npy"):   
++            np.save("io_logging/input.npy", (x/self.scale_a).cpu().numpy())
+         if get_global_idx() == 0 and save_access_onnx():
+             if not os.path.exists("npz_logging"):
+                 os.makedirs("npz_logging")
+@@ -324,6 +328,8 @@
+ 
+         output2 = F.conv2d(x, weight_integer, bias_integer, self.stride, self.padding, self.dilation, self.groups) 
+ 
++        output2 = F.conv2d(x/self.scale_a, weight_integer/weight_scaling_factor, bias_integer/weight_scaling_factor.flatten()/self.scale_a, self.stride, self.padding, self.dilation, self.groups)*weight_scaling_factor.reshape(1,-1,1,1)*self.scale_a
++
+ 
+         if self.training and self.norm is not None:
+             # output1.grad = output2.grad
+@@ -388,7 +394,9 @@
+         bias_integer = SymmetricQuantFunction.apply(b, 16, scale_x * weight_scaling_factor.squeeze()) * scale_x * weight_scaling_factor.squeeze()
+         bias_integer = bias_integer.to(x.device)
+ 
+-        output2 = F.conv2d(x, weight_integer, bias_integer, self.stride, self.padding, self.dilation, self.groups)
++        # output2 = F.conv2d(x, weight_integer, bias_integer, self.stride, self.padding, self.dilation, self.groups)
++        
++        output2 = F.conv2d(x/scale_x, weight_integer/weight_scaling_factor, bias_integer/weight_scaling_factor.flatten()/scale_x, self.stride, self.padding, self.dilation, self.groups)*weight_scaling_factor.reshape(1,-1,1,1)*scale_x
+ 
+         if not self.training and get_global_idx() >= 0 and save_access_onnx(): #log npz:
+             idx = get_next_global_idx()
+Binary files segformer_verification/npy/input.npy and segformer_verification_hw/npy/input.npy differ
+Binary files segformer_verification/npy/output.npy and segformer_verification_hw/npy/output.npy differ
+Binary files segformer_verification/output.npy and segformer_verification_hw/output.npy differ
+diff -ruN -x '*.pyc' -x 'events.out*' -x '*.png' segformer_verification/verify.py segformer_verification_hw/verify.py
+--- segformer_verification/verify.py	2024-02-19 18:22:08.000000000 +0000
++++ segformer_verification_hw/verify.py	2024-02-23 07:33:36.955343152 +0000
+@@ -190,7 +190,7 @@
+         val_dst = Cityscapes(root=opts.data_root,
+                              split='val', transform=val_transform)
+     return val_dst
+-
++import shutil
+ 
+ def validate(opts, model, loader, device, metrics, ret_samples_ids=None):
+     """Do validation and return specified samples"""
+@@ -204,6 +204,7 @@
+         img_id = 0
+ 
+     with torch.no_grad():
++        shutil.rmtree("io_logging", ignore_errors=True)
+         for i, (images, labels) in tqdm(enumerate(loader)):
+             # print("images shape: ", images.shape)
+             images = images.to(device, dtype=torch.float32)
+@@ -213,6 +214,9 @@
+             # exit()
+             labels = labels.to(device, dtype=torch.long)
+             outputs = model(images)
++            ## copy input.npy and output.npy to npy folder with index
++            shutil.move('io_logging/input.npy', 'io_logging/input_{}.npy'.format(i))
++            shutil.move('io_logging/output.npy', 'io_logging/output_{}.npy'.format(i))
+             
+             # print('activation scale {}'.format(model.module.backbone.input_stem[0].conv.lsq_a.s))
+             if outputs.shape[-2:] != labels.shape[-2:]:

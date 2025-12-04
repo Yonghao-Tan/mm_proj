@@ -1,0 +1,256 @@
+
+MC2 : Memory Compiler Software, 2024/01/10, 17:23:40
+MC2 : Compiled on Mar 17 2015 at 11:38:37
+MC2 : Compiled on Linux 2.4.21-27.EL x86_64 x86_64 (64 bits)
+MC2 : Running on Linux 3.10.0-1160.76.1.el7.x86_64 x86_64
+MC2 : Version 2012.02.00.d (c) Interra Systems Inc.
+
+
+INFO  (MC, 701): MC2 run options used :: /nfs/project/shared_lib/t28_hpcplus/MC/tsmc_n28hpcpmc_20120200_110a/TSMCHOME/sram/Compiler/tsmc_n28hpcpmc_20120200_110a/MC2_2012.02.00.d/bin/Linux-64/mc2-eu
+        -c tsn28hpcpuhddpsram_20120200_170a.mco -cfg 
+        tsdn28hpcpuhdb512x128m4m.cfg -ui textual -v -p tsmceva  
+INFO  (MC, 604): Reading file 'tsdn28hpcpuhdb512x128m4m.cfg' ... 
+INFO  (MC, 606): Parsed configuration file 'tsdn28hpcpuhdb512x128m4m.cfg' successfully. 
+INFO  (MC, 801): The compiler was built using MC2 Version 2012.02.00.d 
+INFO  (MC, 606): Parsed global file from the archive successfully. 
+INFO  (MC, 606): Global and configuration files analyzed successfully. 
+INFO  (MC, 802): Overwriting PVT with default values. 
+INFO  (MC, 802): Set voltage for slow with default value. 
+INFO  (MC, 802): Set voltage for typical with default value. 
+INFO  (MC, 802): Set voltage for fast with default value. 
+INFO  (MC, 802): Set voltage for custom corner 1 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 2 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 3 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 4 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 5 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 6 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 7 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 8 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 9 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 10 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 11 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 12 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 13 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 14 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 15 with default value. 
+INFO  (MC, 802): Set voltage for custom corner 16 with default value. 
+INFO  (MC, 802): Set temperature for slow with default value. 
+INFO  (MC, 802): Set temperature for typical with default value. 
+INFO  (MC, 802): Set temperature for fast with default value. 
+INFO  (MC, 802): Set temperature for custom corner 1 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 2 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 3 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 4 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 5 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 6 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 7 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 8 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 9 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 10 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 11 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 12 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 13 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 14 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 15 with default value. 
+INFO  (MC, 802): Set temperature for custom corner 16 with default value. 
+INFO  (MC, 802): Set process for custom corner 1 with default value. 
+INFO  (MC, 802): Set process for custom corner 2 with default value. 
+INFO  (MC, 802): Set process for custom corner 3 with default value. 
+INFO  (MC, 802): Set process for custom corner 4 with default value. 
+INFO  (MC, 802): Set process for custom corner 5 with default value. 
+INFO  (MC, 802): Set process for custom corner 6 with default value. 
+INFO  (MC, 802): Set process for custom corner 7 with default value. 
+INFO  (MC, 802): Set process for custom corner 8 with default value. 
+INFO  (MC, 802): Set process for custom corner 9 with default value. 
+INFO  (MC, 802): Set process for custom corner 10 with default value. 
+INFO  (MC, 802): Set process for custom corner 11 with default value. 
+INFO  (MC, 802): Set process for custom corner 12 with default value. 
+INFO  (MC, 802): Set process for custom corner 13 with default value. 
+INFO  (MC, 802): Set process for custom corner 14 with default value. 
+INFO  (MC, 802): Set process for custom corner 15 with default value. 
+INFO  (MC, 802): Set process for custom corner 16 with default value. 
+INFO  (MC, 606): Reading placement file from archive ... 
+WARN  (MC, 402): Geometric block contains export statements. 
+INFO  (MC, 606): Placement file analyzed successfully. 
+INFO  (MC, 701): PRINT ((null)) Valid word depth !! 
+INFO  (MC, 701): PRINT ((null)) valid word width !! 
+INFO  (MC, 800): Created directory 'tsdn28hpcpuhdb512x128m4m_170a' 
+INFO  (MC, 800): Created directory 'tsdn28hpcpuhdb512x128m4m_170a/LOG' 
+INFO  (MC, 801): Running spice delay calculator for slow process. 
+INFO  (MC, 801): Running spice delay calculator for typical process. 
+INFO  (MC, 801): Running spice delay calculator for fast process. 
+INFO  (MC, 801): Tiling ... 
+INFO  (MC, 800): Created directory 'tsdn28hpcpuhdb512x128m4m_170a/LEF' 
+INFO  (MC, 800): Writing abstract cell in LEF ... 
+INFO  (MC, 801): IP tagging TopCell_R90... 
+INFO  (MC, 801): Adding the prefix 'SDBM200W80_' to all GDSII cell names except the cell 
+        'TSDN28HPCPUHDB512X128M4M'. 
+INFO  (MC, 800): Created directory 'tsdn28hpcpuhdb512x128m4m_170a/GDSII' 
+INFO  (MC, 800): Created directory 'tsdn28hpcpuhdb512x128m4m_170a/SPICE' 
+INFO  (MC, 800): Writing SPICE netlist for top cell 'TopCell' ... 
+INFO  (MC, 801): Running spice delay calculator for slow process custom corner 1. 
+INFO  (MC, 801): Running spice delay calculator for slow process custom corner 2. 
+INFO  (MC, 801): Running spice delay calculator for slow process custom corner 3. 
+INFO  (MC, 801): Running spice delay calculator for typical process custom corner 4. 
+INFO  (MC, 801): Running spice delay calculator for typical process custom corner 5. 
+INFO  (MC, 801): Running spice delay calculator for fast process custom corner 6. 
+INFO  (MC, 801): Running spice delay calculator for fast process custom corner 7. 
+INFO  (MC, 801): Running spice delay calculator for fast process custom corner 8. 
+INFO  (MC, 801): Running spice delay calculator for slow process custom corner 9. 
+INFO  (MC, 801): Running spice delay calculator for slow process custom corner 10. 
+INFO  (MC, 801): Running spice delay calculator for slow process custom corner 11. 
+INFO  (MC, 801): Running spice delay calculator for typical process custom corner 12. 
+INFO  (MC, 801): Running spice delay calculator for typical process custom corner 13. 
+INFO  (MC, 801): Running spice delay calculator for fast process custom corner 14. 
+INFO  (MC, 801): Running spice delay calculator for fast process custom corner 15. 
+INFO  (MC, 801): Running spice delay calculator for fast process custom corner 16. 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81vm40c.ds'
+        ... 
+INFO  (MC, 800): Created directory 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET' 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81v0c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81v125c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_tt0p9v25c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_tt0p9v85c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99vm40c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99v0c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99v125c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9vm40c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9v0c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9v125c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_tt1v25c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_tt1v85c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05vm40c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05v0c.ds'
+        ... 
+INFO  (MC, 800): Expanding Text DataSheet template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DATASHEET/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05v125c.ds'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81vm40c.lib'
+        ... 
+INFO  (MC, 800): Created directory 'tsdn28hpcpuhdb512x128m4m_170a/NLDM' 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81v0c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81v125c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_tt0p9v25c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_tt0p9v85c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99vm40c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99v0c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99v125c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9vm40c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9v0c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9v125c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_tt1v25c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_tt1v85c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05vm40c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05v0c.lib'
+        ... 
+INFO  (MC, 800): Expanding NLDM template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/NLDM/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05v125c.lib'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81vm40c.v'
+        ... 
+INFO  (MC, 800): Created directory 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG' 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81v0c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81v125c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_tt0p9v25c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_tt0p9v85c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99vm40c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99v0c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99v125c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9vm40c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9v0c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9v125c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_tt1v25c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_tt1v85c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05vm40c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05v0c.v'
+        ... 
+INFO  (MC, 800): Expanding Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05v125c.v'
+        ... 
+INFO  (MC, 800): Expanding Hcell template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/SPICE/tsdn28hpcpuhdb512x128m4m_170a.hcell'
+        ... 
+INFO  (MC, 800): Expanding LEF template from archive to 
+        'tsdn28hpcpuhdb512x128m4m_170a/LEF/tsdn28hpcpuhdb512x128m4m_170a.alef' 
+        ... 
+INFO  (MC, 800): Expanding Logic Vision MBist Model V5 template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DFT/MBIST/tsdn28hpcpuhdb512x128m4m_170a_logicv.lib'
+        ... 
+INFO  (MC, 800): Created directory 'tsdn28hpcpuhdb512x128m4m_170a/DFT/MBIST' 
+INFO  (MC, 800): Expanding Tetramax ATPG Scan template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DFT/ATPG/tsdn28hpcpuhdb512x128m4m_170a_tmax.v'
+        ... 
+INFO  (MC, 800): Created directory 'tsdn28hpcpuhdb512x128m4m_170a/DFT/ATPG' 
+INFO  (MC, 800): Expanding FastScan ATPG Scan template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DFT/ATPG/tsdn28hpcpuhdb512x128m4m_170a_fscan.lib'
+        ... 
+INFO  (MC, 800): Expanding Synopsys MASIS template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/DFT/MBIST/tsdn28hpcpuhdb512x128m4m_170a.masis'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81vm40c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81v0c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p81v125c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_tt0p9v25c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_tt0p9v85c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99vm40c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99v0c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg0p99v125c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9vm40c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9v0c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ssg0p9v125c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_tt1v25c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_tt1v85c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05vm40c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05v0c_pwr.v'
+        ... 
+INFO  (MC, 800): Expanding pwr Verilog template from archive to 'tsdn28hpcpuhdb512x128m4m_170a/VERILOG/tsdn28hpcpuhdb512x128m4m_170a_ffg1p05v125c_pwr.v'
+        ... 
+INFO  (MC, 800): Writing file 'lastrun.cfg' ... 
+INFO  (MC, 701): Number of errors : 0, Number of warnings : 0 
+INFO  (MC, 701): Normal Termination. 
+INFO  (MC, 701): See the log file for details. 

@@ -1,0 +1,23 @@
+0.6
+2019.2
+Nov  6 2019
+21:57:16
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/fpga_sdp_ram.sv,1704106500,systemVerilog,,,,fpga_sdp_ram,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/special_pu.v,1706787803,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_divider_unsign.v,,special_pu,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_cache.v,1704626221,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_divider_unsign.v,,spu_cache,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_divider_sign.v,1701943680,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_divider_unsign.v,,spu_divider_sign,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_divider_unsign.v,1705640333,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_ln_block.v,,spu_divider_unsign,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_ln_block.v,1707056702,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_ln_sqrt.v,,spu_ln_block,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_ln_sqrt.v,1698562690,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_ln_top.v,,spu_ln_sqrt,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_ln_top.v,1706686720,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_addertree.v,,spu_ln_top,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_addertree.v,1701775745,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_block.v,,spu_sm_addertree,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_block.v,1710152269,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_expu_approx.v,,spu_sm_block,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_expu_approx.v,1704261192,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_expu_approx_lut.v,,spu_sm_expu_approx,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_expu_approx_lut.v,1704627002,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_expu_pwl.v,,spu_sm_expu_approx_lut,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_expu_pwl.v,1704627610,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_top.v,,spu_sm_expu_pwl,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_top.v,1704775003,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_xmax.v,,spu_sm_top,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/spu_sm_xmax.v,1698505165,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/SPU_tb.v,,spu_sm_xmax,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Bank_all.v,1710152051,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Buffer.v,,FeatureMap_Bank_0;FeatureMap_Bank_1;FeatureMap_Bank_10;FeatureMap_Bank_11;FeatureMap_Bank_12;FeatureMap_Bank_13;FeatureMap_Bank_14;FeatureMap_Bank_15;FeatureMap_Bank_2;FeatureMap_Bank_3;FeatureMap_Bank_4;FeatureMap_Bank_5;FeatureMap_Bank_6;FeatureMap_Bank_7;FeatureMap_Bank_8;FeatureMap_Bank_9,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/FeatureMap_Buffer.v,1698140360,verilog,,D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/rtl/special_pu.v,,FeatureMap_Buffer,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/verification/SPU_tb.v,1704782618,verilog,,,,SPU_tb,,,,,,,,
+D:/OneDrive - HKUST Connect/ACCESS/Special_PU_proj/vivado_proj/Special_PU_simu/Special_PU_simu.sim/sim_1/behav/xsim/glbl.v,1573089660,verilog,,,,glbl,,,,,,,,

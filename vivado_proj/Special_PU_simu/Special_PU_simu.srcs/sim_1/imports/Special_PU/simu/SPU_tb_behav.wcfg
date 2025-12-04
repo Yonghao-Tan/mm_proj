@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="SPU_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="SPU_tb" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="367500fs"></ZoomStartTime>
+      <ZoomEndTime time="1462501fs"></ZoomEndTime>
+      <Cursor1Time time="874500fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="236"></NameColumnWidth>
+      <ValueColumnWidth column_width="102"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="24" />
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/core_clk" type="logic">
+      <obj_property name="ElementShortName">core_clk</obj_property>
+      <obj_property name="ObjectShortName">core_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/spu_start" type="logic">
+      <obj_property name="ElementShortName">spu_start</obj_property>
+      <obj_property name="ObjectShortName">spu_start</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/spu_end" type="logic">
+      <obj_property name="ElementShortName">spu_end</obj_property>
+      <obj_property name="ObjectShortName">spu_end</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/sm_state" type="array">
+      <obj_property name="ElementShortName">sm_state[2:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_state[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/sm_lbuf_wen" type="logic">
+      <obj_property name="ElementShortName">sm_lbuf_wen</obj_property>
+      <obj_property name="ObjectShortName">sm_lbuf_wen</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/spu_matrix_x_h" type="array">
+      <obj_property name="ElementShortName">spu_matrix_x_h[10:0]</obj_property>
+      <obj_property name="ObjectShortName">spu_matrix_x_h[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/spu_matrix_x_w" type="array">
+      <obj_property name="ElementShortName">spu_matrix_x_w[11:0]</obj_property>
+      <obj_property name="ObjectShortName">spu_matrix_x_w[11:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/pad_en" type="array">
+      <obj_property name="ElementShortName">pad_en[7:0]</obj_property>
+      <obj_property name="ObjectShortName">pad_en[7:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_process_data_0_pwl" type="array">
+      <obj_property name="ElementShortName">sm_process_data_0_pwl[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_process_data_0_pwl[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_process_data_1_pwl" type="array">
+      <obj_property name="ElementShortName">sm_process_data_1_pwl[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_process_data_1_pwl[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_process_data_2_pwl" type="array">
+      <obj_property name="ElementShortName">sm_process_data_2_pwl[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_process_data_2_pwl[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_process_data_3_pwl" type="array">
+      <obj_property name="ElementShortName">sm_process_data_3_pwl[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_process_data_3_pwl[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_process_data_4_pwl" type="array">
+      <obj_property name="ElementShortName">sm_process_data_4_pwl[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_process_data_4_pwl[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_process_data_5_pwl" type="array">
+      <obj_property name="ElementShortName">sm_process_data_5_pwl[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_process_data_5_pwl[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_process_data_6_pwl" type="array">
+      <obj_property name="ElementShortName">sm_process_data_6_pwl[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_process_data_6_pwl[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_process_data_7_pwl" type="array">
+      <obj_property name="ElementShortName">sm_process_data_7_pwl[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_process_data_7_pwl[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_out_data_0" type="array">
+      <obj_property name="ElementShortName">sm_out_data_0[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_out_data_0[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_out_data_1" type="array">
+      <obj_property name="ElementShortName">sm_out_data_1[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_out_data_1[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_out_data_2" type="array">
+      <obj_property name="ElementShortName">sm_out_data_2[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_out_data_2[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_out_data_3" type="array">
+      <obj_property name="ElementShortName">sm_out_data_3[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_out_data_3[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_out_data_4" type="array">
+      <obj_property name="ElementShortName">sm_out_data_4[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_out_data_4[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_out_data_5" type="array">
+      <obj_property name="ElementShortName">sm_out_data_5[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_out_data_5[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_out_data_6" type="array">
+      <obj_property name="ElementShortName">sm_out_data_6[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_out_data_6[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/SPU_tb/u_special_pu/u_spu_sm_top/u_spu_sm_block_0/sm_out_data_7" type="array">
+      <obj_property name="ElementShortName">sm_out_data_7[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sm_out_data_7[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+</wave_config>
