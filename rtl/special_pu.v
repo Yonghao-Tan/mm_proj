@@ -52,13 +52,12 @@ module special_pu #(
     input [6:0] ln_div_m_in,
     input [4:0] ln_div_e_in,
 
-    // fmbuf Interface definition
-    output lbuf_ren, // lbuf read enable
-    output [ADDR_WIDTH-1:0] lbuf_raddr, // lbuf read address, validated by lbuf_ren
-    input [DATA_WIDTH-1:0] lbuf_rdata, // lbuf read data, 2cycle delay from lbuf_ren
-    output lbuf_wen, // lbuf write enable
-    output [ADDR_WIDTH-1:0] lbuf_waddr, // lbuf write address, validated by lbuf_wen
-    output [DATA_WIDTH-1:0] lbuf_wdata // lbuf write data, validated by lbuf_wen
+    // buffer Interface definition
+    output gbuf_cen,
+    output gbuf_wen,
+    output [ADDR_WIDTH-1:0] gbuf_addr,
+    output [DATA_WIDTH-1:0] gbuf_din,
+    input [DATA_WIDTH-1:0] gbuf_dout
 );
 
 reg spu_op;
@@ -107,22 +106,14 @@ end
 
 wire [11:0] token_per_block = spu_matrix_y;
 
-wire [ADDR_WIDTH-1:0] ln_lbuf_raddr, sm_lbuf_raddr; // submodule buf rd addr
-wire [ADDR_WIDTH-1:0] ln_lbuf_waddr, sm_lbuf_waddr; // submodule buf wr addr
-wire ln_lbuf_ren, sm_lbuf_ren; // submodule buf rd en
-wire ln_lbuf_wen, sm_lbuf_wen; // submodule buf wr en
-wire [DATA_WIDTH-1:0] ln_lbuf_wdata; // submodule buf rd data
-wire [DATA_WIDTH-1:0] sm_lbuf_wdata; // submodule buf wr data
+wire [ADDR_WIDTH-1:0] ln_gbuf_raddr, sm_gbuf_raddr; // submodule buf rd addr
+wire [ADDR_WIDTH-1:0] ln_gbuf_waddr, sm_gbuf_waddr; // submodule buf wr addr
+wire ln_gbuf_ren, sm_gbuf_ren; // submodule buf rd en
+wire ln_gbuf_wen, sm_gbuf_wen; // submodule buf wr en
+wire [DATA_WIDTH-1:0] ln_gbuf_wdata; // submodule buf rd data
+wire [DATA_WIDTH-1:0] sm_gbuf_wdata; // submodule buf wr data
 reg ln_start, sm_start; // submodule process start
 wire ln_end, sm_end; // submodule process end
-
-// arbitration
-assign lbuf_raddr = spu_op ? ln_lbuf_raddr : sm_lbuf_raddr;
-assign lbuf_waddr = spu_op ? ln_lbuf_waddr : sm_lbuf_waddr;
-assign lbuf_ren = spu_op ? ln_lbuf_ren : sm_lbuf_ren;
-assign lbuf_wen = spu_op ? ln_lbuf_wen : sm_lbuf_wen;
-assign lbuf_wdata = spu_op ? ln_lbuf_wdata : sm_lbuf_wdata;
-assign spu_end = spu_op ? ln_end : sm_end;
 
 // submodule start signals, remain the same process as spu_start
 always @(posedge core_clk or negedge rst_n) begin
@@ -157,12 +148,12 @@ u_spu_ln_top (
     .ln_div_m(ln_div_m),
     .ln_div_e(ln_div_e),
     
-    .ln_lbuf_ren(ln_lbuf_ren),
-    .ln_lbuf_raddr(ln_lbuf_raddr),
-    .ln_lbuf_rdata(lbuf_rdata),
-    .ln_lbuf_wen(ln_lbuf_wen),
-    .ln_lbuf_waddr(ln_lbuf_waddr),
-    .ln_lbuf_wdata(ln_lbuf_wdata)
+    .ln_gbuf_ren(ln_gbuf_ren),
+    .ln_gbuf_raddr(ln_gbuf_raddr),
+    .ln_gbuf_rdata(gbuf_dout),
+    .ln_gbuf_wen(ln_gbuf_wen),
+    .ln_gbuf_waddr(ln_gbuf_waddr),
+    .ln_gbuf_wdata(ln_gbuf_wdata)
 );
 
 // submodule SoftMax (SM / sm) instance
@@ -185,11 +176,28 @@ spu_sm_top #(
     .sm_exp_shift_output(shift2),
     .sm_shift_output(shift0),
 
-    .sm_lbuf_ren(sm_lbuf_ren),
-    .sm_lbuf_raddr(sm_lbuf_raddr),
-    .sm_lbuf_rdata(lbuf_rdata),
-    .sm_lbuf_wen(sm_lbuf_wen),
-    .sm_lbuf_waddr(sm_lbuf_waddr),
-    .sm_lbuf_wdata(sm_lbuf_wdata)
+    .sm_gbuf_ren(sm_gbuf_ren),
+    .sm_gbuf_raddr(sm_gbuf_raddr),
+    .sm_gbuf_rdata(gbuf_dout),
+    .sm_gbuf_wen(sm_gbuf_wen),
+    .sm_gbuf_waddr(sm_gbuf_waddr),
+    .sm_gbuf_wdata(sm_gbuf_wdata)
 );
+
+
+
+// arbitration
+
+wire gbuf_ren_tmp = spu_op ? ln_gbuf_ren : sm_gbuf_ren;
+wire gbuf_wen_tmp = spu_op ? ln_gbuf_wen : sm_gbuf_wen;
+wire [ADDR_WIDTH-1:0] gbuf_raddr_tmp = spu_op ? ln_gbuf_raddr : sm_gbuf_raddr;
+wire [ADDR_WIDTH-1:0] gbuf_waddr_tmp = spu_op ? ln_gbuf_waddr : sm_gbuf_waddr;
+wire [DATA_WIDTH-1:0] gbuf_wdata_tmp = spu_op ? ln_gbuf_wdata : sm_gbuf_wdata;
+
+assign gbuf_cen = ~(gbuf_ren_tmp || gbuf_wen_tmp);
+assign gbuf_wen = ~gbuf_wen_tmp;
+assign gbuf_addr = gbuf_ren_tmp ? gbuf_raddr_tmp : gbuf_waddr_tmp;
+assign gbuf_din = gbuf_wdata_tmp;
+
+assign spu_end = spu_op ? ln_end : sm_end;
 endmodule

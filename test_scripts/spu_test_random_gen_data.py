@@ -164,7 +164,7 @@ def spu_test(matrix_y, matrix_x, scale1, scale0, scale_exp, mode, input_lowerbou
 
     vivado_input = test_random_input.reshape(1, matrix_y, matrix_x // 4, 4)
     max_addr = max(im_base_addr + matrix_y * ifm_block_align, om_base_addr + matrix_y * ofm_block_align)
-    write_tensor_to_hex(vivado_input, './test_scripts/data/lbuf_input.hex', im_base_addr=im_base_addr, max_addr=max_addr)
+    write_tensor_to_hex(vivado_input, './test_scripts/data/gbuf_input.hex', im_base_addr=im_base_addr, max_addr=max_addr)
 
 
     with open('./verification/SPU_tb.v', 'r') as f:

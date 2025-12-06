@@ -60,46 +60,42 @@ wire [ADDR_WIDTH-1:0] im_block_align;
 wire [ADDR_WIDTH-1:0] om_block_align;
 
 
-assign spu_op = 1'b1;
-assign matrix_y = 16'd3;
-assign matrix_x = 16'd8;
-assign shift0 = 4'b1001;
-assign shift1 = 4'b0000;
-assign shift2 = 5'b00000;
-assign ln_div_m = 7'd64;
-assign ln_div_e = 5'd9;
+assign spu_op = 1'b0;
+assign matrix_y = 16'd1;
+assign matrix_x = 16'd16;
+assign shift0 = 4'b1100;
+assign shift1 = 4'b0011;
+assign shift2 = 5'b00101;
+assign ln_div_m = 7'd0;
+assign ln_div_e = 5'd0;
 assign im_base_addr = 16'd0;
 assign om_base_addr = 16'd0;
-assign im_block_align = 12'b000000000010;
-assign om_block_align = 12'b000000000010;
+assign im_block_align = 12'b000000000100;
+assign om_block_align = 12'b000000000100;
 
 wire [35:0] total_test_rd_addr = matrix_y*matrix_x / 4 + om_base_addr;
 
-reg [DATA_WIDTH-1:0] lbuf [(2**ADDR_WIDTH)-1:0];
+reg [DATA_WIDTH-1:0] mem [(2**ADDR_WIDTH)-1:0];
 // Read buffer content from file
 initial begin
-	$readmemh("../../../../../../test_scripts/data/lbuf_input.hex", lbuf);
+	$readmemh("../../../../../../test_scripts/data/gbuf_input.hex", mem);
 end
 
-wire [ADDR_WIDTH-1:0] lbuf_raddr;
-wire [ADDR_WIDTH-1:0] lbuf_waddr;
-wire lbuf_ren;
-wire lbuf_wen;
-reg [DATA_WIDTH-1:0] lbuf_rdata;
-wire [DATA_WIDTH-1:0] lbuf_wdata;
+wire [ADDR_WIDTH-1:0] gbuf_addr;
+wire gbuf_wen;
+reg [DATA_WIDTH-1:0] gbuf_dout;
+wire [DATA_WIDTH-1:0] gbuf_din;
 
-reg [ADDR_WIDTH-1:0] tb_rd_cnt; // not enough bits!!!
+reg [ADDR_WIDTH-1:0] tb_rd_cnt;
 wire tb_rd_en;
 
-wire [ADDR_WIDTH-1:0] fmap_rd_addr = buffer_sel ? lbuf_raddr : tb_rd_cnt;
-wire fmap_rd_en = buffer_sel ? lbuf_ren : tb_rd_en;
-
-always @(posedge core_clk or negedge rst_n) begin
-    if (~rst_n) lbuf_rdata <= 'd0;
-    else if (lbuf_ren) lbuf_rdata <= lbuf[lbuf_raddr];
-end
 always @(posedge core_clk) begin
-    if (lbuf_wen) lbuf[lbuf_waddr] <= lbuf_wdata;
+	if (gbuf_cen == 1'b0) begin
+		if (gbuf_wen == 1'b0)
+			mem[gbuf_addr] <= gbuf_din;
+		else
+			gbuf_dout <= mem[gbuf_addr];
+	end
 end
 
 special_pu u_special_pu(
@@ -121,12 +117,11 @@ special_pu u_special_pu(
     .ln_div_m_in(ln_div_m),
     .ln_div_e_in(ln_div_e),
 
-    .lbuf_rdata(lbuf_rdata),
-    .lbuf_wdata(lbuf_wdata),
-    .lbuf_raddr(lbuf_raddr), // read addr for global buffer
-    .lbuf_ren(lbuf_ren), // read enable for global buffer
-    .lbuf_waddr(lbuf_waddr), // write addr for global buffer
-    .lbuf_wen(lbuf_wen) // write enable for global buffer
+    .gbuf_cen(gbuf_cen),
+    .gbuf_wen(gbuf_wen),
+    .gbuf_addr(gbuf_addr),
+    .gbuf_din(gbuf_din),
+    .gbuf_dout(gbuf_dout)
 );
 
 always @(posedge core_clk or negedge rst_n) begin
@@ -147,10 +142,10 @@ reg [35:0] total_read_cnt = 'd0;
 always @(posedge core_clk) begin
     if (tb_rd_en) begin
         total_read_cnt <= total_read_cnt + 'd1;
-        data_0[0] = lbuf[tb_rd_cnt][7:0];
-        data_0[1] = lbuf[tb_rd_cnt][15:8];
-        data_0[2] = lbuf[tb_rd_cnt][23:16];
-        data_0[3] = lbuf[tb_rd_cnt][31:24];
+        data_0[0] = mem[tb_rd_cnt][7:0];
+        data_0[1] = mem[tb_rd_cnt][15:8];
+        data_0[2] = mem[tb_rd_cnt][23:16];
+        data_0[3] = mem[tb_rd_cnt][31:24];
         $fwrite(file1, "%d\n%d\n%d\n%d\n", data_0[0], data_0[1], data_0[2], data_0[3]);
     end
     else if (total_read_cnt == total_test_rd_addr - om_base_addr)  begin

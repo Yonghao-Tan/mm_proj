@@ -46,12 +46,12 @@ module spu_sm_top #(
     input [3:0] sm_shift_output,
 
     // fmbuf Interface definition
-    output reg sm_lbuf_ren, // lbuf read enable
-    output [ADDR_WIDTH-1:0] sm_lbuf_raddr, // lbuf read address, validated by sm_lbuf_ren
-    input [DATA_WIDTH-1:0] sm_lbuf_rdata, // lbuf read data, 2cycle delay from sm_lbuf_ren
-    output sm_lbuf_wen, // lbuf write enable
-    output [ADDR_WIDTH-1:0] sm_lbuf_waddr, // lbuf write address, validated by sm_lbuf_wen
-    output [DATA_WIDTH-1:0] sm_lbuf_wdata // lbuf write data, validated by sm_lbuf_wen
+    output reg sm_gbuf_ren, // gbuf read enable
+    output [ADDR_WIDTH-1:0] sm_gbuf_raddr, // gbuf read address, validated by sm_gbuf_ren
+    input [DATA_WIDTH-1:0] sm_gbuf_rdata, // gbuf read data, 2cycle delay from sm_gbuf_ren
+    output sm_gbuf_wen, // gbuf write enable
+    output [ADDR_WIDTH-1:0] sm_gbuf_waddr, // gbuf write address, validated by sm_gbuf_wen
+    output [DATA_WIDTH-1:0] sm_gbuf_wdata // gbuf write data, validated by sm_gbuf_wen
 );
 // sm state machine
 localparam IDLE = 3'b000;
@@ -66,11 +66,11 @@ wire [ADDR_WIDTH-1:0] spu_matrix_x_per_unit = spu_matrix_x >> 2;
 reg [2:0] sm_next_state, sm_state; // ln state machine signals
 
 // decompose rdata for 16 processing blocks
-wire [31:0] sm_data_in = sm_lbuf_rdata;
+wire [31:0] sm_data_in = sm_gbuf_rdata;
 
 // gather wdata from 16 processing blocks
 wire [31:0] sm_data_out; 
-assign sm_lbuf_wdata = sm_data_out;
+assign sm_gbuf_wdata = sm_data_out;
 
 // counters for inner states
 reg [ADDR_WIDTH-1:0] max_cnt;
@@ -79,10 +79,10 @@ reg [8-1:0] reci_cnt;
 reg [ADDR_WIDTH-1:0] eu_stage_b_cnt;
 
 // addr control
-reg [ADDR_WIDTH-1:0] sm_lbuf_raddr_sum;
-reg [ADDR_WIDTH-1:0] sm_lbuf_waddr_sum; // accumulation of row addr
-reg [ADDR_WIDTH-1:0] sm_lbuf_raddr_token;
-reg [ADDR_WIDTH-1:0] sm_lbuf_waddr_token; // basic addr to process 1 row (token)
+reg [ADDR_WIDTH-1:0] sm_gbuf_raddr_sum;
+reg [ADDR_WIDTH-1:0] sm_gbuf_waddr_sum; // accumulation of row addr
+reg [ADDR_WIDTH-1:0] sm_gbuf_raddr_token;
+reg [ADDR_WIDTH-1:0] sm_gbuf_waddr_token; // basic addr to process 1 row (token)
 reg [ADDR_WIDTH-1:0] finish_token_cnt; // count finished rows (tokens), for state transition, maximum 32768/16, should be [15:0] to represent
 reg [2:0] rd_flag; // handle mutiple read loops in state EU_STAGE_A and EU_STAGE_B
 
@@ -189,7 +189,7 @@ always @(posedge core_clk or negedge rst_n) begin
     end
 end
 
-// lbuf interface control
+// gbuf interface control
 always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) finish_token_cnt <= 'd0;
     else if (sm_state == EU_STAGE_B) begin
@@ -199,29 +199,29 @@ always @(posedge core_clk or negedge rst_n) begin
 end
 
 always @(posedge core_clk or negedge rst_n) begin
-    if (!rst_n) sm_lbuf_raddr_sum <= 'd0;
+    if (!rst_n) sm_gbuf_raddr_sum <= 'd0;
     else if (sm_state == EU_STAGE_B && eu_state_b_tr) begin
-        sm_lbuf_raddr_sum <= sm_lbuf_raddr_sum + ifm_addr_align;
+        sm_gbuf_raddr_sum <= sm_gbuf_raddr_sum + ifm_addr_align;
     end
-    else if (sm_start) sm_lbuf_raddr_sum <= im_base_addr;
-    else if (sm_state == IDLE) sm_lbuf_raddr_sum <= 'd0;
+    else if (sm_start) sm_gbuf_raddr_sum <= im_base_addr;
+    else if (sm_state == IDLE) sm_gbuf_raddr_sum <= 'd0;
 end
 
 always @(posedge core_clk or negedge rst_n) begin
-    if (!rst_n) sm_lbuf_waddr_sum <= 'd0;
+    if (!rst_n) sm_gbuf_waddr_sum <= 'd0;
     else if (sm_state == EU_STAGE_B && eu_state_b_tr) begin
-        sm_lbuf_waddr_sum <= sm_lbuf_waddr_sum + ofm_addr_align;
+        sm_gbuf_waddr_sum <= sm_gbuf_waddr_sum + ofm_addr_align;
     end
-    else if (sm_start) sm_lbuf_waddr_sum <= om_base_addr;
-    else if (sm_state == IDLE) sm_lbuf_waddr_sum <= 'd0;
+    else if (sm_start) sm_gbuf_waddr_sum <= om_base_addr;
+    else if (sm_state == IDLE) sm_gbuf_waddr_sum <= 'd0;
 end
 
 always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) rd_flag <= 3'b000;
     else begin
-        if (sm_state == MAX && rd_flag == 3'b001 && sm_lbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b010; // max lock
-        else if (sm_state == EU_STAGE_A && rd_flag == 3'b011 && sm_lbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b100; // max lock
-        else if (sm_state == EU_STAGE_B && rd_flag == 3'b101 && sm_lbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b000; // max lock
+        if (sm_state == MAX && rd_flag == 3'b001 && sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b010; // max lock
+        else if (sm_state == EU_STAGE_A && rd_flag == 3'b011 && sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b100; // max lock
+        else if (sm_state == EU_STAGE_B && rd_flag == 3'b101 && sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b000; // max lock
         else if (sm_next_state == MAX && rd_flag == 3'b000) rd_flag <= 3'b001;
         else if (sm_next_state == EU_STAGE_A && rd_flag == 3'b010) rd_flag <= 3'b011;
         else if (sm_next_state == EU_STAGE_B && rd_flag == 3'b100) rd_flag <= 3'b101;
@@ -231,46 +231,46 @@ end
 
 // raddr per token rules
 always @(posedge core_clk or negedge rst_n) begin
-    if (!rst_n) sm_lbuf_raddr_token <= 'd0;
+    if (!rst_n) sm_gbuf_raddr_token <= 'd0;
     else begin
         case(sm_state)
             MAX: begin
-                if (sm_lbuf_raddr_token == spu_matrix_x_per_unit - 1) sm_lbuf_raddr_token <= 'd0;
-                else if (rd_flag == 3'b001) sm_lbuf_raddr_token <= sm_lbuf_raddr_token + 'd1;
+                if (sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1) sm_gbuf_raddr_token <= 'd0;
+                else if (rd_flag == 3'b001) sm_gbuf_raddr_token <= sm_gbuf_raddr_token + 'd1;
             end
             EU_STAGE_A: begin
-                if (sm_lbuf_raddr_token == spu_matrix_x_per_unit - 1) sm_lbuf_raddr_token <= 'd0;
-                else if (rd_flag == 3'b011) sm_lbuf_raddr_token <= sm_lbuf_raddr_token + 'd1;
+                if (sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1) sm_gbuf_raddr_token <= 'd0;
+                else if (rd_flag == 3'b011) sm_gbuf_raddr_token <= sm_gbuf_raddr_token + 'd1;
             end
             EU_STAGE_B: begin
-                if (sm_lbuf_raddr_token == spu_matrix_x_per_unit - 1) sm_lbuf_raddr_token <= 'd0;
-                else if (rd_flag == 3'b101) sm_lbuf_raddr_token <= sm_lbuf_raddr_token + 'd1;
+                if (sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1) sm_gbuf_raddr_token <= 'd0;
+                else if (rd_flag == 3'b101) sm_gbuf_raddr_token <= sm_gbuf_raddr_token + 'd1;
             end
-            IDLE: sm_lbuf_raddr_token <= 'd0;
+            IDLE: sm_gbuf_raddr_token <= 'd0;
         endcase
     end
 end
 
-assign sm_lbuf_raddr = sm_lbuf_raddr_token + sm_lbuf_raddr_sum;
+assign sm_gbuf_raddr = sm_gbuf_raddr_token + sm_gbuf_raddr_sum;
 always @(*) begin
-    sm_lbuf_ren = (sm_state == EU_STAGE_A && rd_flag == 3'b011) || (sm_state == EU_STAGE_B && rd_flag == 3'b101) || (sm_state == MAX && rd_flag == 3'b001);
+    sm_gbuf_ren = (sm_state == EU_STAGE_A && rd_flag == 3'b011) || (sm_state == EU_STAGE_B && rd_flag == 3'b101) || (sm_state == MAX && rd_flag == 3'b001);
 end
-// assign sm_lbuf_ren = (sm_state == MAX && rd_flag == 3'b001);
+// assign sm_gbuf_ren = (sm_state == MAX && rd_flag == 3'b001);
 
 always @(posedge core_clk or negedge rst_n) begin
-    if (!rst_n) sm_lbuf_waddr_token <= 'd0;
+    if (!rst_n) sm_gbuf_waddr_token <= 'd0;
     else begin
-        if (sm_state == MAX && max_cnt >= RLATENCY) sm_lbuf_waddr_token <= sm_lbuf_waddr_token + 'd1;
+        if (sm_state == MAX && max_cnt >= RLATENCY) sm_gbuf_waddr_token <= sm_gbuf_waddr_token + 'd1;
         else if (sm_state == EU_STAGE_A && eu_stage_a_cnt >= RLATENCY + 3)
-                sm_lbuf_waddr_token <= sm_lbuf_waddr_token + 'd1;
-        else if (sm_state == EU_STAGE_B && eu_stage_b_cnt >= RLATENCY + 1 + 1) sm_lbuf_waddr_token <= sm_lbuf_waddr_token + 'd1;
-        else sm_lbuf_waddr_token <= 'd0;
+                sm_gbuf_waddr_token <= sm_gbuf_waddr_token + 'd1;
+        else if (sm_state == EU_STAGE_B && eu_stage_b_cnt >= RLATENCY + 1 + 1) sm_gbuf_waddr_token <= sm_gbuf_waddr_token + 'd1;
+        else sm_gbuf_waddr_token <= 'd0;
     end
 end
-assign sm_lbuf_wen = (sm_state == EU_STAGE_A && eu_stage_a_cnt >= RLATENCY + 3 && eu_stage_a_cnt <= spu_matrix_x_per_unit - 1 + RLATENCY + 3) || (sm_state == EU_STAGE_B && eu_stage_b_cnt >= RLATENCY + 1 + 1);
+assign sm_gbuf_wen = (sm_state == EU_STAGE_A && eu_stage_a_cnt >= RLATENCY + 3 && eu_stage_a_cnt <= spu_matrix_x_per_unit - 1 + RLATENCY + 3) || (sm_state == EU_STAGE_B && eu_stage_b_cnt >= RLATENCY + 1 + 1);
 // rd_data received at RLATENCY, EU process needs 3 cycle, Multiply with reci needs 1 cycle, so the wen should be RLATENCY + 1 + 1
 // plus 1 more since output pulse
-assign sm_lbuf_waddr = sm_lbuf_waddr_token + sm_lbuf_waddr_sum;
+assign sm_gbuf_waddr = sm_gbuf_waddr_token + sm_gbuf_waddr_sum;
 
 // sm processing block instances
 spu_sm_block u_spu_sm_block(

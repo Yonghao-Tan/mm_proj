@@ -46,12 +46,12 @@ module spu_ln_top #(
     input [4:0] ln_div_e,
 
     // fmbuf Interface definition
-    output ln_lbuf_ren, // lbuf read enable
-    output [ADDR_WIDTH-1:0] ln_lbuf_raddr, // lbuf read address, validated by ln_lbuf_ren
-    input [DATA_WIDTH-1:0] ln_lbuf_rdata, // lbuf read data, 2cycle delay from ln_lbuf_ren
-    output ln_lbuf_wen, // lbuf write enable
-    output [ADDR_WIDTH-1:0] ln_lbuf_waddr, // lbuf write address, validated by ln_lbuf_wen
-    output [DATA_WIDTH-1:0] ln_lbuf_wdata // lbuf write data, validated by ln_lbuf_wen
+    output ln_gbuf_ren, // gbuf read enable
+    output [ADDR_WIDTH-1:0] ln_gbuf_raddr, // gbuf read address, validated by ln_gbuf_ren
+    input [DATA_WIDTH-1:0] ln_gbuf_rdata, // gbuf read data, 2cycle delay from ln_gbuf_ren
+    output ln_gbuf_wen, // gbuf write enable
+    output [ADDR_WIDTH-1:0] ln_gbuf_waddr, // gbuf write address, validated by ln_gbuf_wen
+    output [DATA_WIDTH-1:0] ln_gbuf_wdata // gbuf write data, validated by ln_gbuf_wen
 );
 
 // ln state machine
@@ -60,17 +60,20 @@ localparam SUM_COUNT = 3'b001;
 localparam SUM_DIV = 3'b011;
 localparam SQRT = 3'b100;
 localparam OUT = 3'b110;
+
+localparam OUT_COMP_LATENCY = 2;
+
 reg [2:0] ln_next_state, ln_state; // ln state machine signals
 
 // other params
 wire [ADDR_WIDTH-1:0] spu_matrix_x_per_unit = spu_matrix_x >> 2;
 
 // decompose rdata for 16 processing blocks
-wire [DATA_WIDTH-1:0] ln_data_in = ln_lbuf_rdata;
+wire [DATA_WIDTH-1:0] ln_data_in = ln_gbuf_rdata;
 
 // gather wdata from 16 processing blocks
 wire [DATA_WIDTH-1:0] ln_data_out; 
-assign ln_lbuf_wdata = ln_data_out;
+assign ln_gbuf_wdata = ln_data_out;
 
 // counters for inner states
 reg [ADDR_WIDTH-1:0] sum_count_cnt;
@@ -79,10 +82,10 @@ reg [7:0] sqrt_cnt;
 reg [ADDR_WIDTH-1:0] out_cnt;
 
 // addr control
-reg [ADDR_WIDTH-1:0] ln_lbuf_raddr_sum;
-reg [ADDR_WIDTH-1:0] ln_lbuf_waddr_sum; // accumulation of row addr
-reg [ADDR_WIDTH-1:0] ln_lbuf_raddr_token;
-reg [ADDR_WIDTH-1:0] ln_lbuf_waddr_token; // basic addr to process 1 row (token)
+reg [ADDR_WIDTH-1:0] ln_gbuf_raddr_sum;
+reg [ADDR_WIDTH-1:0] ln_gbuf_waddr_sum; // accumulation of row addr
+reg [ADDR_WIDTH-1:0] ln_gbuf_raddr_token;
+reg [ADDR_WIDTH-1:0] ln_gbuf_waddr_token; // basic addr to process 1 row (token)
 reg [ADDR_WIDTH-1:0] finish_token_cnt; // count finished rows (tokens), for state transition
 reg [2:0] rd_flag; // handle mutiple read loops in state SUM_COUNT and OUT
 
@@ -98,7 +101,7 @@ wire sum_count_tr = (sum_count_cnt == (spu_matrix_x_per_unit - 1 + 1 + RLATENCY)
 wire sum_en = (ln_state == SUM_COUNT && sum_count_cnt >= RLATENCY + 1); // enbale accumulators
 wire sum_div_finish; // tranfer SUM_DIV to next state
 wire sqrt_reci_finish;
-wire out_tr = (out_cnt == (spu_matrix_x_per_unit - 1 + RLATENCY + 2)); // when OUT ends, and transfer to next state, plus 2 since pulse 2 cycle
+wire out_tr = (out_cnt == (spu_matrix_x_per_unit - 1 + RLATENCY + OUT_COMP_LATENCY)); // when OUT ends, and transfer to next state, plus 2 since pulse 2 cycle
 // state transition conditions
 always @(*) begin
     case(ln_state)
@@ -171,39 +174,30 @@ always @(posedge core_clk or negedge rst_n) begin
     end
 end
 
-// lbuf interface control
+// gbuf interface control
 always @(posedge core_clk or negedge rst_n) begin
-    if (!rst_n) ln_lbuf_waddr_token <= 'd0;
-    else begin
-        if (ln_state == SUM_COUNT && sum_count_cnt >= RLATENCY) ln_lbuf_waddr_token <= ln_lbuf_waddr_token + 'd1; // plus 2 since pluse 2
-        else if (ln_state == OUT && out_cnt >= RLATENCY + 2) ln_lbuf_waddr_token <= ln_lbuf_waddr_token + 'd1; // plus 2 since pluse 2
-        else ln_lbuf_waddr_token <= 'd0;
+    if (!rst_n) ln_gbuf_raddr_sum <= 'd0;
+    else if (ln_state == OUT && out_tr) begin
+        ln_gbuf_raddr_sum <= ln_gbuf_raddr_sum + ifm_addr_align;
     end
+    else if (ln_start) ln_gbuf_raddr_sum <= im_base_addr;
+    else if (ln_state == IDLE) ln_gbuf_raddr_sum <= 'd0;
 end
 
 always @(posedge core_clk or negedge rst_n) begin
-    if (!rst_n) ln_lbuf_raddr_sum <= 'd0;
+    if (!rst_n) ln_gbuf_waddr_sum <= 'd0;
     else if (ln_state == OUT && out_tr) begin
-        ln_lbuf_raddr_sum <= ln_lbuf_raddr_sum + ifm_addr_align;
+        ln_gbuf_waddr_sum <= ln_gbuf_waddr_sum + ofm_addr_align;
     end
-    else if (ln_start) ln_lbuf_raddr_sum <= im_base_addr;
-    else if (ln_state == IDLE) ln_lbuf_raddr_sum <= 'd0;
-end
-
-always @(posedge core_clk or negedge rst_n) begin
-    if (!rst_n) ln_lbuf_waddr_sum <= 'd0;
-    else if (ln_state == OUT && out_tr) begin
-        ln_lbuf_waddr_sum <= ln_lbuf_waddr_sum + ofm_addr_align;
-    end
-    else if (ln_start) ln_lbuf_waddr_sum <= om_base_addr;
-    else if (ln_state == IDLE) ln_lbuf_waddr_sum <= 'd0;
+    else if (ln_start) ln_gbuf_waddr_sum <= om_base_addr;
+    else if (ln_state == IDLE) ln_gbuf_waddr_sum <= 'd0;
 end
 
 always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) rd_flag <= 3'b000;
     else begin
-        if (ln_state == SUM_COUNT && rd_flag == 3'b001 && ln_lbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b010; // max lock
-        else if (ln_state == OUT && rd_flag == 3'b011 && ln_lbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b000; // max lock
+        if (ln_state == SUM_COUNT && rd_flag == 3'b001 && ln_gbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b010; // max lock
+        else if (ln_state == OUT && rd_flag == 3'b011 && ln_gbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b000; // max lock
         else if (ln_next_state == SUM_COUNT && rd_flag == 3'b000) rd_flag <= 3'b001;
         else if (ln_next_state == OUT && rd_flag == 3'b010) rd_flag <= 3'b011;
         else if (ln_state == IDLE) rd_flag <= 3'b000;
@@ -212,24 +206,32 @@ end
 
 // raddr per token rules
 always @(posedge core_clk or negedge rst_n) begin
-    if (!rst_n) ln_lbuf_raddr_token <= 'd0;
+    if (!rst_n) ln_gbuf_raddr_token <= 'd0;
     else begin
         case(ln_state)
             SUM_COUNT: begin
-                if (ln_lbuf_raddr_token == spu_matrix_x_per_unit - 1) ln_lbuf_raddr_token <= 'd0;
-                else if (rd_flag == 3'b001) ln_lbuf_raddr_token <= ln_lbuf_raddr_token + 'd1;
+                if (ln_gbuf_raddr_token == spu_matrix_x_per_unit - 1) ln_gbuf_raddr_token <= 'd0;
+                else if (rd_flag == 3'b001) ln_gbuf_raddr_token <= ln_gbuf_raddr_token + 'd1;
             end
             OUT: begin
-                if (ln_lbuf_raddr_token == spu_matrix_x_per_unit - 1) ln_lbuf_raddr_token <= 'd0;
-                else if (rd_flag == 3'b011) ln_lbuf_raddr_token <= ln_lbuf_raddr_token + 'd1;
+                if (ln_gbuf_raddr_token == spu_matrix_x_per_unit - 1) ln_gbuf_raddr_token <= 'd0;
+                else if (rd_flag == 3'b011) ln_gbuf_raddr_token <= ln_gbuf_raddr_token + 'd1;
             end
-            IDLE: ln_lbuf_raddr_token <= 'd0;
+            IDLE: ln_gbuf_raddr_token <= 'd0;
         endcase
     end
 end
 
-assign ln_lbuf_ren = (ln_state == SUM_COUNT && rd_flag == 3'b001) || (ln_state == OUT && rd_flag == 3'b011);
-assign ln_lbuf_raddr = ln_lbuf_raddr_token + ln_lbuf_raddr_sum;
+always @(posedge core_clk or negedge rst_n) begin
+    if (!rst_n) ln_gbuf_waddr_token <= 'd0;
+    else begin
+        if (ln_state == OUT && out_cnt >= RLATENCY + OUT_COMP_LATENCY) ln_gbuf_waddr_token <= ln_gbuf_waddr_token + 'd1; // plus 2 since pluse 2
+        else ln_gbuf_waddr_token <= 'd0;
+    end
+end
+
+assign ln_gbuf_ren = (ln_state == SUM_COUNT && rd_flag == 3'b001) || (ln_state == OUT && rd_flag == 3'b011);
+assign ln_gbuf_raddr = ln_gbuf_raddr_token + ln_gbuf_raddr_sum;
 
 always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) finish_token_cnt <= 'd0;
@@ -239,8 +241,8 @@ always @(posedge core_clk or negedge rst_n) begin
     else if (ln_state == IDLE) finish_token_cnt <= 'd0;
 end
 
-assign ln_lbuf_wen = (ln_state == SUM_COUNT && sum_count_cnt >= RLATENCY && sum_count_cnt <= (spu_matrix_x_per_unit - 1 + RLATENCY)) || (ln_state == OUT && out_cnt >= RLATENCY + 2);
-assign ln_lbuf_waddr = ln_lbuf_waddr_token + ln_lbuf_waddr_sum;
+assign ln_gbuf_wen = (ln_state == OUT && out_cnt >= RLATENCY + OUT_COMP_LATENCY);
+assign ln_gbuf_waddr = ln_gbuf_waddr_token + ln_gbuf_waddr_sum;
 
 // ln processing block instances
 spu_ln_block u_spu_ln_block(
