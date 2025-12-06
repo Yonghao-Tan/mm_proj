@@ -61,7 +61,8 @@ localparam SUM_DIV = 3'b011;
 localparam SQRT = 3'b100;
 localparam OUT = 3'b110;
 
-localparam OUT_COMP_LATENCY = 2;
+localparam OUT_COMP_LATENCY = 0;
+localparam SUM_COUNT_LATENCY = 1;
 
 reg [2:0] ln_next_state, ln_state; // ln state machine signals
 
@@ -96,9 +97,9 @@ always @(posedge core_clk or negedge rst_n) begin
 end
 
 // substate control signals
-wire sum_count_tr = (sum_count_cnt == (spu_matrix_x_per_unit - 1 + 1 + RLATENCY)); // plus1 because sum(X^2) pulse 2 clk
+wire sum_count_tr = (sum_count_cnt == (spu_matrix_x_per_unit - 1 + SUM_COUNT_LATENCY + RLATENCY)); // plus1 because sum(X^2) pulse 2 clk
 // pulse 1 because sum of 8 x^2 use 2 cycles, when SUM_COUNT ends, and transfer to next state
-wire sum_en = (ln_state == SUM_COUNT && sum_count_cnt >= RLATENCY + 1); // enbale accumulators
+wire sum_en = (ln_state == SUM_COUNT && sum_count_cnt >= RLATENCY + SUM_COUNT_LATENCY); // enbale accumulators
 wire sum_div_finish; // tranfer SUM_DIV to next state
 wire sqrt_reci_finish;
 wire out_tr = (out_cnt == (spu_matrix_x_per_unit - 1 + RLATENCY + OUT_COMP_LATENCY)); // when OUT ends, and transfer to next state, plus 2 since pulse 2 cycle

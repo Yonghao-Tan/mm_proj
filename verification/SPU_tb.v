@@ -61,17 +61,17 @@ wire [ADDR_WIDTH-1:0] om_block_align;
 
 
 assign spu_op = 1'b0;
-assign matrix_y = 16'd1;
-assign matrix_x = 16'd16;
-assign shift0 = 4'b1100;
+assign matrix_y = 16'd5;
+assign matrix_x = 16'd64;
+assign shift0 = 4'b0111;
 assign shift1 = 4'b0011;
 assign shift2 = 5'b00101;
 assign ln_div_m = 7'd0;
 assign ln_div_e = 5'd0;
 assign im_base_addr = 16'd0;
 assign om_base_addr = 16'd0;
-assign im_block_align = 12'b000000000100;
-assign om_block_align = 12'b000000000100;
+assign im_block_align = 12'b000000010000;
+assign om_block_align = 12'b000000010000;
 
 wire [35:0] total_test_rd_addr = matrix_y*matrix_x / 4 + om_base_addr;
 
@@ -82,6 +82,9 @@ initial begin
 end
 
 wire [ADDR_WIDTH-1:0] gbuf_addr;
+wire [ADDR_WIDTH-1:0] gbuf_raddr, gbuf_waddr;
+
+wire gbuf_cen;
 wire gbuf_wen;
 reg [DATA_WIDTH-1:0] gbuf_dout;
 wire [DATA_WIDTH-1:0] gbuf_din;
@@ -89,12 +92,18 @@ wire [DATA_WIDTH-1:0] gbuf_din;
 reg [ADDR_WIDTH-1:0] tb_rd_cnt;
 wire tb_rd_en;
 
+// always @(posedge core_clk) begin
+// 	if (gbuf_cen == 1'b0) begin
+// 		if (gbuf_wen == 1'b0)
+// 			mem[gbuf_addr] <= gbuf_din;
+// 		else
+// 			gbuf_dout <= mem[gbuf_addr];
+// 	end
+// end
 always @(posedge core_clk) begin
 	if (gbuf_cen == 1'b0) begin
-		if (gbuf_wen == 1'b0)
-			mem[gbuf_addr] <= gbuf_din;
-		else
-			gbuf_dout <= mem[gbuf_addr];
+		if (gbuf_wen == 1'b0) mem[gbuf_waddr] <= gbuf_din;
+        gbuf_dout <= mem[gbuf_raddr];
 	end
 end
 
@@ -117,9 +126,14 @@ special_pu u_special_pu(
     .ln_div_m_in(ln_div_m),
     .ln_div_e_in(ln_div_e),
 
+    // .gbuf_cen(gbuf_cen),
+    // .gbuf_wen(gbuf_wen),
+    // .gbuf_addr(gbuf_addr),
+    // .gbuf_din(gbuf_din),
     .gbuf_cen(gbuf_cen),
     .gbuf_wen(gbuf_wen),
-    .gbuf_addr(gbuf_addr),
+    .gbuf_raddr(gbuf_raddr),
+    .gbuf_waddr(gbuf_waddr),
     .gbuf_din(gbuf_din),
     .gbuf_dout(gbuf_dout)
 );

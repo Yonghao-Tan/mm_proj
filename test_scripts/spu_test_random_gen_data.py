@@ -307,17 +307,19 @@ if __name__ == "__main__":
     mode = 1  # mode 0: SoftMax; 1: LayerNorm
 
     # matrix configuration for softmax
-    matrix_y_list_sm = [1, 3, 5]
-    matrix_x_list_sm = [8, 16, 32]  # from segformer_b0 quantization version, with 512 x 480
+    matrix_y_list_sm = [1, 5]
+    matrix_x_list_sm = [8, 64]  # from segformer_b0 quantization version, with 512 x 480
     scales_list_sm = [(2 ** -3, 2 ** -5, 2 ** -12),
                         (2 ** -3, 2 ** -5, 2 ** -9),
                         (2 ** -2, 2 ** -6, 2 ** -10),
                         (2 ** -0, 2 ** -7, 2 ** -10)]
+    scales_list_sm = [(2 ** -3, 2 ** -5, 2 ** -7)]
                      
     # matrix configuration for layernorm
-    matrix_y_list_ln = [1, 3, 5]
-    matrix_x_list_ln = [8, 16, 32]  # from segformer_b0 quantization version, with 512 x 480
+    matrix_y_list_ln = [1, 5]
+    matrix_x_list_ln = [8, 64]  # from segformer_b0 quantization version, with 512 x 480
     scales_list_ln = [2 ** -9, 2 ** -6,  2 ** -4, 2 ** -2]  # from segformer_b0 quantization version, with 512 x 480
+    scales_list_ln = [2 ** -6]
 
     if mode == 0:
         matrix_y_list = matrix_y_list_sm
@@ -336,8 +338,8 @@ if __name__ == "__main__":
             if mode == 0:
                 for (scale1, scale_exp, scale0) in scales_list_sm:
                     hw_mae_tmp, hw_mpe_tmp, comp_mae_tmp, comp_mpe_tmp = spu_test(matrix_y, matrix_x, scale1,
-                                                                                    scale0, scale_exp, mode, -128,
-                                                                                    128,
+                                                                                    scale0, scale_exp, mode, -16,
+                                                                                    16,
                                                                                     debug=False, RLATENCY=RLATENCY)
                     hw_mae_list.append(hw_mae_tmp.item())
                     hw_mpe_list.append(hw_mpe_tmp.item())

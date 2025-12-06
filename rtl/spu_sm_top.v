@@ -60,6 +60,9 @@ localparam RECI = 3'b011; // now is the divider stage
 localparam EU_STAGE_B = 3'b100;
 localparam MAX = 3'b101;
 
+localparam EU_LATENCY = 0;
+localparam OUT_LATENCY = 0;
+
 // other params
 wire [ADDR_WIDTH-1:0] spu_matrix_x_per_unit = spu_matrix_x >> 2;
 
@@ -99,19 +102,18 @@ wire comp_rst = (sm_state == MAX && max_cnt == 0);
 
 reg eu_stage_a_tr;
 always @(*) begin
-    eu_stage_a_tr = (eu_stage_a_cnt == spu_matrix_x_per_unit - 1 + RLATENCY + 3);
+    eu_stage_a_tr = (eu_stage_a_cnt == spu_matrix_x_per_unit - 1 + RLATENCY + EU_LATENCY);
 end
-// wire eu_stage_a_tr = (eu_stage_a_cnt == spu_matrix_x_per_unit - 1 + RLATENCY + 3);
 
 reg adder_tree_en;
 always @(*) begin
-    adder_tree_en = (sm_state == EU_STAGE_A && eu_stage_a_cnt >= RLATENCY + 3);
+    adder_tree_en = (sm_state == EU_STAGE_A && eu_stage_a_cnt >= RLATENCY + EU_LATENCY);
 end
 // wire adder_tree_en = (sm_state == EU_STAGE_A && eu_stage_a_cnt >= RLATENCY + 3); // after RLATENCY, data comes, then expu needs 3 clk
 
 wire reci_exp_sum_en = (sm_state == RECI && reci_cnt == 0);
 wire reci_exp_sum_finish;
-wire eu_state_b_tr = (eu_stage_b_cnt == spu_matrix_x_per_unit - 1 + RLATENCY + 1 + 1); // plus 1st 1 since eu_b pulse 3, plus 2nd 1 since mul pulse plus 3rd 1 since output pulse
+wire eu_state_b_tr = (eu_stage_b_cnt == spu_matrix_x_per_unit - 1 + RLATENCY + EU_LATENCY + OUT_LATENCY); // plus 1st 1 since eu_b pulse 3, plus 2nd 1 since mul pulse plus 3rd 1 since output pulse
 
 // state transition conditions
 always @(*) begin
@@ -261,13 +263,11 @@ always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) sm_gbuf_waddr_token <= 'd0;
     else begin
         if (sm_state == MAX && max_cnt >= RLATENCY) sm_gbuf_waddr_token <= sm_gbuf_waddr_token + 'd1;
-        else if (sm_state == EU_STAGE_A && eu_stage_a_cnt >= RLATENCY + 3)
-                sm_gbuf_waddr_token <= sm_gbuf_waddr_token + 'd1;
-        else if (sm_state == EU_STAGE_B && eu_stage_b_cnt >= RLATENCY + 1 + 1) sm_gbuf_waddr_token <= sm_gbuf_waddr_token + 'd1;
+        else if (sm_state == EU_STAGE_B && eu_stage_b_cnt >= RLATENCY + EU_LATENCY + OUT_LATENCY) sm_gbuf_waddr_token <= sm_gbuf_waddr_token + 'd1;
         else sm_gbuf_waddr_token <= 'd0;
     end
 end
-assign sm_gbuf_wen = (sm_state == EU_STAGE_A && eu_stage_a_cnt >= RLATENCY + 3 && eu_stage_a_cnt <= spu_matrix_x_per_unit - 1 + RLATENCY + 3) || (sm_state == EU_STAGE_B && eu_stage_b_cnt >= RLATENCY + 1 + 1);
+assign sm_gbuf_wen = (sm_state == EU_STAGE_B && eu_stage_b_cnt >= RLATENCY + EU_LATENCY + OUT_LATENCY);
 // rd_data received at RLATENCY, EU process needs 3 cycle, Multiply with reci needs 1 cycle, so the wen should be RLATENCY + 1 + 1
 // plus 1 more since output pulse
 assign sm_gbuf_waddr = sm_gbuf_waddr_token + sm_gbuf_waddr_sum;

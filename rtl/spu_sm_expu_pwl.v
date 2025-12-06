@@ -70,34 +70,24 @@ assign comp_case[6] = din_q < break_points_q_6;
 assign comp_case[7] = din_q >=  break_points_q_6;
 
 reg [2:0] index;
-always @(posedge core_clk or negedge rst_n) begin // really works when use casex, latency is lower
-    if (~rst_n) index <= 3'd0;
-    else if (sm_state == EU_STAGE_A) begin
-        casex(comp_case)
-            8'bxxxxxxx1: index <= 3'd0;
-            8'bxxxxxx10: index <= 3'd1;
-            8'bxxxxx100: index <= 3'd2;
-            8'bxxxx1000: index <= 3'd3;
-            8'bxxx10000: index <= 3'd4;
-            8'bxx100000: index <= 3'd5;
-            8'bx1000000: index <= 3'd6;
-            8'b10000000: index <= 3'd7;
-            default: index <= 3'd0;
-        endcase
-    end
+// Changed to combinational logic
+always @(*) begin
+    casex(comp_case)
+        8'bxxxxxxx1: index = 3'd0;
+        8'bxxxxxx10: index = 3'd1;
+        8'bxxxxx100: index = 3'd2;
+        8'bxxxx1000: index = 3'd3;
+        8'bxxx10000: index = 3'd4;
+        8'bxx100000: index = 3'd5;
+        8'bx1000000: index = 3'd6;
+        8'b10000000: index = 3'd7;
+        default: index = 3'd0;
+    endcase
 end
 
-reg signed [8:0] din_q_reg;
-reg signed [15:0] dout_f;
-
-always @(posedge core_clk or negedge rst_n) begin
-	if (~rst_n) din_q_reg <= 'd0;
-	else if (sm_state == EU_STAGE_A) din_q_reg <= din_q;
-end
-always @(posedge core_clk or negedge rst_n) begin
-    if (~rst_n) dout_f <= 16'd0;
-    else if (sm_state == EU_STAGE_A) dout_f <= coeff_q[index] * din_q_reg + bias_q[index]; // 1, 1, 6 * 1, 8 = 1, 9, 6
-end
+// Removed registers for pipeline stages, now direct calculation
+wire signed [15:0] dout_f;
+assign dout_f = coeff_q[index] * din_q + bias_q[index]; 
 
 wire [18:0] dout_f_extend = dout_f[15] ? 19'd0 : {4'b0000, dout_f[14:0]}; // clamp lowerbound 0; 1, 9, 6 -> 9, 6 -> 13, 6
 
@@ -106,12 +96,9 @@ wire [18:0] dout_f_shift = dout_f_extend << output_scale_shift; // 9, 11
 wire [7:0] dout_q_pre = dout_f_shift[18:6] >= 8'd255 ? 8'd255 : dout_f_shift[5] && (dout_f_shift[6] || dout_f_shift[4:0]) ? dout_f_shift[13:6] + 8'd1 : dout_f_shift[13:6];
 // |(lut_approx_0_shift[27:20]) ? 8'd255 avoid upperbound overflow, but bitwidth has been increased, no longer needed
 
-always @(posedge core_clk or negedge rst_n) begin
-    if (~rst_n) begin
-        dout_q <= 'd0;
-    end
-    else if (sm_state == EU_STAGE_A) begin
-        dout_q <= dout_q_pre;
-    end
+// Changed output to combinational logic (or keep as wire if module interface allows, but here it's reg in port list so I'll use always @(*))
+always @(*) begin
+    dout_q = dout_q_pre;
 end
+
 endmodule

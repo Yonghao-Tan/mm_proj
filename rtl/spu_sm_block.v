@@ -72,6 +72,8 @@ spu_sm_xmax u_spu_sm_xmax(
 
 // calculate exp_out = exp(-(xmax - x))
 // EU_A_in = xmax - x
+// Stage A and B share logic structure but data flow might differ in context of pipeline, 
+// here we reuse the logic for both stages since input is always sm_b_data_in
 wire signed [8:0] sm_eu_process_data_0_pwl = sm_process_data_0_pwl - x_max;
 wire signed [8:0] sm_eu_process_data_1_pwl = sm_process_data_1_pwl - x_max;
 wire signed [8:0] sm_eu_process_data_2_pwl = sm_process_data_2_pwl - x_max;
@@ -126,32 +128,24 @@ spu_divider_unsign #(.DIVIDEND_DW(1),.DIVISOR_DW(20),.PRECISION_DW(20), .STAGE_L
     .div_ack(reci_exp_sum_finish)
 );
 
-reg [7:0] sm_expu_cache_data_0, sm_expu_cache_data_1, sm_expu_cache_data_2, sm_expu_cache_data_3;
-always @(*) begin
-    sm_expu_cache_data_0 = sm_b_data_in[8*1-1:8*0];
-    sm_expu_cache_data_1 = sm_b_data_in[8*2-1:8*1];
-    sm_expu_cache_data_2 = sm_b_data_in[8*3-1:8*2];
-    sm_expu_cache_data_3 = sm_b_data_in[8*4-1:8*3];
-end
+// Removed cache registers
+// reg [7:0] sm_expu_cache_data_0, sm_expu_cache_data_1, sm_expu_cache_data_2, sm_expu_cache_data_3;
 
-reg [28:0] sm_out_data_0_f_long;
-reg [28:0] sm_out_data_1_f_long;
-reg [28:0] sm_out_data_2_f_long;
-reg [28:0] sm_out_data_3_f_long;
-always @(posedge core_clk or negedge rst_n) begin
-    if (~rst_n) begin
-        sm_out_data_0_f_long <= 'd0;
-        sm_out_data_1_f_long <= 'd0;
-        sm_out_data_2_f_long <= 'd0;
-        sm_out_data_3_f_long <= 'd0;
-    end
-    else if(sm_state == EU_STAGE_B) begin
-        sm_out_data_0_f_long <= sm_expu_cache_data_0 * div_data_out_unsigned; // 1,7,0 * 0,1,20 = 1,8,20
-        sm_out_data_1_f_long <= sm_expu_cache_data_1 * div_data_out_unsigned;
-        sm_out_data_2_f_long <= sm_expu_cache_data_2 * div_data_out_unsigned;
-        sm_out_data_3_f_long <= sm_expu_cache_data_3 * div_data_out_unsigned;
-    end
-end
+// In Stage B, we need to process the input data again through the exp unit
+// Since the logic for sm_expu_data_out_* is combinational and depends on sm_b_data_in,
+// we can directly use sm_expu_data_out_* for the multiplication.
+// The input to multiplication should be the output of the EXP unit, which is already calculated above.
+
+wire [28:0] sm_out_data_0_f_long;
+wire [28:0] sm_out_data_1_f_long;
+wire [28:0] sm_out_data_2_f_long;
+wire [28:0] sm_out_data_3_f_long;
+
+// Combinational logic for multiplication
+assign sm_out_data_0_f_long = sm_expu_data_out_0 * div_data_out_unsigned; // 1,7,0 * 0,1,20 = 1,8,20
+assign sm_out_data_1_f_long = sm_expu_data_out_1 * div_data_out_unsigned;
+assign sm_out_data_2_f_long = sm_expu_data_out_2 * div_data_out_unsigned;
+assign sm_out_data_3_f_long = sm_expu_data_out_3 * div_data_out_unsigned;
 
 wire [12:0] sm_out_data_0_f = sm_out_data_0_f_long[20:8]; // 1,8,20 -> 1,12
 wire [12:0] sm_out_data_1_f = sm_out_data_1_f_long[20:8];
@@ -173,22 +167,18 @@ reg [8-1:0] sm_out_data_0;
 reg [8-1:0] sm_out_data_1;
 reg [8-1:0] sm_out_data_2;
 reg [8-1:0] sm_out_data_3;
-always @(posedge core_clk or negedge rst_n) begin
-    if (~rst_n) begin
-        sm_out_data_0 <= 'd0;
-        sm_out_data_1 <= 'd0;
-        sm_out_data_2 <= 'd0;
-        sm_out_data_3 <= 'd0;
-    end
-    else if(sm_state == EU_STAGE_B) begin
-        sm_out_data_0 <= sm_out_data_0_pre;
-        sm_out_data_1 <= sm_out_data_1_pre;
-        sm_out_data_2 <= sm_out_data_2_pre;
-        sm_out_data_3 <= sm_out_data_3_pre;
-    end
+
+// Changed to combinational logic
+always @(*) begin
+    sm_out_data_0 = sm_out_data_0_pre;
+    sm_out_data_1 = sm_out_data_1_pre;
+    sm_out_data_2 = sm_out_data_2_pre;
+    sm_out_data_3 = sm_out_data_3_pre;
 end
+
 // gather output data
-assign sm_b_data_out = sm_state == EU_STAGE_A ? 
-    {sm_expu_data_out_3, sm_expu_data_out_2, sm_expu_data_out_1, sm_expu_data_out_0} : 
-    {sm_out_data_3, sm_out_data_2, sm_out_data_1, sm_out_data_0};
+// assign sm_b_data_out = sm_state == EU_STAGE_A ? 
+    // {sm_expu_data_out_3, sm_expu_data_out_2, sm_expu_data_out_1, sm_expu_data_out_0} : 
+    // {sm_out_data_3, sm_out_data_2, sm_out_data_1, sm_out_data_0};
+assign sm_b_data_out = {sm_out_data_3, sm_out_data_2, sm_out_data_1, sm_out_data_0};
 endmodule

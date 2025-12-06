@@ -183,24 +183,28 @@ wire signed [10:0] x_minus_mean_3 = ln_post_data_3 - x_mean;
 
 wire signed [19:0] div_data_out_signed = {1'b0, div_data_out_unsigned}; // extend to signed, 1 | 5 | 14
 
-reg signed [30:0] quotient_out_0_extend;
-reg signed [30:0] quotient_out_1_extend;
-reg signed [30:0] quotient_out_2_extend;
-reg signed [30:0] quotient_out_3_extend;
-always @(posedge core_clk or negedge rst_n) begin
-    if (~rst_n) begin
-        quotient_out_0_extend <= 'd0;
-        quotient_out_1_extend <= 'd0;
-        quotient_out_2_extend <= 'd0;
-        quotient_out_3_extend <= 'd0;
-    end
-    else if (ln_state == OUT) begin
-        quotient_out_0_extend <= div_data_out_signed * x_minus_mean_0; // 2 | 13 | 16
-        quotient_out_1_extend <= div_data_out_signed * x_minus_mean_1;
-        quotient_out_2_extend <= div_data_out_signed * x_minus_mean_2;
-        quotient_out_3_extend <= div_data_out_signed * x_minus_mean_3;
-    end
-end
+// reg signed [30:0] quotient_out_0_extend;
+// reg signed [30:0] quotient_out_1_extend;
+// reg signed [30:0] quotient_out_2_extend;
+// reg signed [30:0] quotient_out_3_extend;
+// always @(posedge core_clk or negedge rst_n) begin
+//     if (~rst_n) begin
+//         quotient_out_0_extend <= 'd0;
+//         quotient_out_1_extend <= 'd0;
+//         quotient_out_2_extend <= 'd0;
+//         quotient_out_3_extend <= 'd0;
+//     end
+//     else if (ln_state == OUT) begin
+//         quotient_out_0_extend <= div_data_out_signed * x_minus_mean_0; // 2 | 13 | 16
+//         quotient_out_1_extend <= div_data_out_signed * x_minus_mean_1;
+//         quotient_out_2_extend <= div_data_out_signed * x_minus_mean_2;
+//         quotient_out_3_extend <= div_data_out_signed * x_minus_mean_3;
+//     end
+// end
+wire signed [30:0] quotient_out_0_extend = div_data_out_signed * x_minus_mean_0;
+wire signed [30:0] quotient_out_1_extend = div_data_out_signed * x_minus_mean_1;
+wire signed [30:0] quotient_out_2_extend = div_data_out_signed * x_minus_mean_2;
+wire signed [30:0] quotient_out_3_extend = div_data_out_signed * x_minus_mean_3;
 
 wire signed [30:0] quotient_out_0 = quotient_out_0_extend;
 wire signed [30:0] quotient_out_1 = quotient_out_1_extend;
@@ -248,24 +252,28 @@ wire signed [7:0] ln_initial_norm_q_2 = ln_clamp_neg_flag_2 ? -8'd128 : ln_clamp
 wire signed [7:0] ln_initial_norm_q_3 = ln_clamp_neg_flag_3 ? -8'd128 : ln_clamp_pos_flag_3 ? 8'd127 : quotient_out_3[30] ? ln_q_neg_round_3 : ln_q_pos_round_3;
 
 // pulse 1 cycle at output
-reg signed [8-1:0] ln_out_data_0;
-reg signed [8-1:0] ln_out_data_1;
-reg signed [8-1:0] ln_out_data_2;
-reg signed [8-1:0] ln_out_data_3;
-always @(posedge core_clk or negedge rst_n) begin
-    if (~rst_n) begin
-        ln_out_data_0 <= 'd0;
-        ln_out_data_1 <= 'd0;
-        ln_out_data_2 <= 'd0;
-        ln_out_data_3 <= 'd0;
-    end
-    else if (ln_state == OUT) begin
-        ln_out_data_0 <= ln_initial_norm_q_0;
-        ln_out_data_1 <= ln_initial_norm_q_1;
-        ln_out_data_2 <= ln_initial_norm_q_2;
-        ln_out_data_3 <= ln_initial_norm_q_3;
-    end
-end
+// reg signed [8-1:0] ln_out_data_0;
+// reg signed [8-1:0] ln_out_data_1;
+// reg signed [8-1:0] ln_out_data_2;
+// reg signed [8-1:0] ln_out_data_3;
+// always @(posedge core_clk or negedge rst_n) begin
+//     if (~rst_n) begin
+//         ln_out_data_0 <= 'd0;
+//         ln_out_data_1 <= 'd0;
+//         ln_out_data_2 <= 'd0;
+//         ln_out_data_3 <= 'd0;
+//     end
+//     else if (ln_state == OUT) begin
+//         ln_out_data_0 <= ln_initial_norm_q_0;
+//         ln_out_data_1 <= ln_initial_norm_q_1;
+//         ln_out_data_2 <= ln_initial_norm_q_2;
+//         ln_out_data_3 <= ln_initial_norm_q_3;
+//     end
+// end
+wire signed [8-1:0] ln_out_data_0 = ln_initial_norm_q_0;
+wire signed [8-1:0] ln_out_data_1 = ln_initial_norm_q_1;
+wire signed [8-1:0] ln_out_data_2 = ln_initial_norm_q_2;
+wire signed [8-1:0] ln_out_data_3 = ln_initial_norm_q_3;
 // gather output data
 assign ln_b_data_out = {ln_out_data_3,ln_out_data_2,ln_out_data_1,ln_out_data_0};
 endmodule
