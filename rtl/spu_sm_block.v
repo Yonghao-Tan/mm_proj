@@ -177,8 +177,5 @@ always @(*) begin
 end
 
 // gather output data
-// assign sm_b_data_out = sm_state == EU_STAGE_A ? 
-    // {sm_expu_data_out_3, sm_expu_data_out_2, sm_expu_data_out_1, sm_expu_data_out_0} : 
-    // {sm_out_data_3, sm_out_data_2, sm_out_data_1, sm_out_data_0};
 assign sm_b_data_out = {sm_out_data_3, sm_out_data_2, sm_out_data_1, sm_out_data_0};
 endmodule

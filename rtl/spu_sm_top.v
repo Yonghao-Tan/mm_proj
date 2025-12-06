@@ -49,7 +49,7 @@ module spu_sm_top #(
     output reg sm_gbuf_ren, // gbuf read enable
     output [ADDR_WIDTH-1:0] sm_gbuf_raddr, // gbuf read address, validated by sm_gbuf_ren
     input [DATA_WIDTH-1:0] sm_gbuf_rdata, // gbuf read data, 2cycle delay from sm_gbuf_ren
-    output sm_gbuf_wen, // gbuf write enable
+    output reg sm_gbuf_wen, // gbuf write enable
     output [ADDR_WIDTH-1:0] sm_gbuf_waddr, // gbuf write address, validated by sm_gbuf_wen
     output [DATA_WIDTH-1:0] sm_gbuf_wdata // gbuf write data, validated by sm_gbuf_wen
 );
@@ -89,6 +89,9 @@ reg [ADDR_WIDTH-1:0] sm_gbuf_waddr_token; // basic addr to process 1 row (token)
 reg [ADDR_WIDTH-1:0] finish_token_cnt; // count finished rows (tokens), for state transition, maximum 32768/16, should be [15:0] to represent
 reg [2:0] rd_flag; // handle mutiple read loops in state EU_STAGE_A and EU_STAGE_B
 
+// Toggle for interleaved read/write in EU_STAGE_B
+reg rw_toggle;
+
 // state transition
 always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) sm_state <= IDLE;
@@ -113,7 +116,9 @@ end
 
 wire reci_exp_sum_en = (sm_state == RECI && reci_cnt == 0);
 wire reci_exp_sum_finish;
-wire eu_state_b_tr = (eu_stage_b_cnt == spu_matrix_x_per_unit - 1 + RLATENCY + EU_LATENCY + OUT_LATENCY); // plus 1st 1 since eu_b pulse 3, plus 2nd 1 since mul pulse plus 3rd 1 since output pulse
+// EU_STAGE_B transition needs to account for 2x cycles due to interleaved R/W
+// Modified to trigger earlier to prevent extra write cycle: -2 instead of -1
+wire eu_state_b_tr = (eu_stage_b_cnt == spu_matrix_x_per_unit - 2 + RLATENCY + EU_LATENCY + OUT_LATENCY) && rw_toggle; 
 
 // state transition conditions
 always @(*) begin
@@ -183,11 +188,22 @@ always @(posedge core_clk or negedge rst_n) begin
     end
 end
 
+// rw_toggle control
+always @(posedge core_clk or negedge rst_n) begin
+    if (!rst_n) rw_toggle <= 1'b0; // Start with Read
+    else if (sm_state == EU_STAGE_B) begin
+        rw_toggle <= ~rw_toggle;
+    end
+    else begin
+        rw_toggle <= 1'b0;
+    end
+end
+
 always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) eu_stage_b_cnt <= 'd0;
     else if (sm_state == EU_STAGE_B) begin
         if (eu_state_b_tr) eu_stage_b_cnt <= 'd0;
-        else eu_stage_b_cnt <= eu_stage_b_cnt + 'd1;
+        else if (rw_toggle) eu_stage_b_cnt <= eu_stage_b_cnt + 'd1; // Increment only after Write cycle (or Read cycle, depending on alignment)
     end
 end
 
@@ -195,7 +211,7 @@ end
 always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) finish_token_cnt <= 'd0;
     else if (sm_state == EU_STAGE_B) begin
-        if (eu_stage_b_cnt == spu_matrix_x_per_unit - 1 + RLATENCY) finish_token_cnt <= finish_token_cnt + 'd1;
+        if (eu_stage_b_cnt == spu_matrix_x_per_unit - 2 + RLATENCY + EU_LATENCY + OUT_LATENCY && ~rw_toggle) finish_token_cnt <= finish_token_cnt + 'd1; // 这时候已经要让他+1了
     end
     else if (sm_state == IDLE) finish_token_cnt <= 'd0;
 end
@@ -223,7 +239,7 @@ always @(posedge core_clk or negedge rst_n) begin
     else begin
         if (sm_state == MAX && rd_flag == 3'b001 && sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b010; // max lock
         else if (sm_state == EU_STAGE_A && rd_flag == 3'b011 && sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b100; // max lock
-        else if (sm_state == EU_STAGE_B && rd_flag == 3'b101 && sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b000; // max lock
+        else if (sm_state == EU_STAGE_B && rd_flag == 3'b101 && sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1 && !rw_toggle) rd_flag <= 3'b000; // max lock - wait for last read
         else if (sm_next_state == MAX && rd_flag == 3'b000) rd_flag <= 3'b001;
         else if (sm_next_state == EU_STAGE_A && rd_flag == 3'b010) rd_flag <= 3'b011;
         else if (sm_next_state == EU_STAGE_B && rd_flag == 3'b100) rd_flag <= 3'b101;
@@ -245,8 +261,8 @@ always @(posedge core_clk or negedge rst_n) begin
                 else if (rd_flag == 3'b011) sm_gbuf_raddr_token <= sm_gbuf_raddr_token + 'd1;
             end
             EU_STAGE_B: begin
-                if (sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1) sm_gbuf_raddr_token <= 'd0;
-                else if (rd_flag == 3'b101) sm_gbuf_raddr_token <= sm_gbuf_raddr_token + 'd1;
+                if (sm_gbuf_raddr_token == spu_matrix_x_per_unit - 1 && !rw_toggle) sm_gbuf_raddr_token <= 'd0;
+                else if (rd_flag == 3'b101 && !rw_toggle) sm_gbuf_raddr_token <= sm_gbuf_raddr_token + 'd1; // Only increment on Read cycles
             end
             IDLE: sm_gbuf_raddr_token <= 'd0;
         endcase
@@ -255,7 +271,8 @@ end
 
 assign sm_gbuf_raddr = sm_gbuf_raddr_token + sm_gbuf_raddr_sum;
 always @(*) begin
-    sm_gbuf_ren = (sm_state == EU_STAGE_A && rd_flag == 3'b011) || (sm_state == EU_STAGE_B && rd_flag == 3'b101) || (sm_state == MAX && rd_flag == 3'b001);
+    // Interleaved Read Enable: Only valid when rw_toggle is 0 (Read cycle) during EU_STAGE_B
+    sm_gbuf_ren = (sm_state == EU_STAGE_A && rd_flag == 3'b011) || (sm_state == EU_STAGE_B && rd_flag == 3'b101 && !rw_toggle) || (sm_state == MAX && rd_flag == 3'b001);
 end
 // assign sm_gbuf_ren = (sm_state == MAX && rd_flag == 3'b001);
 
@@ -263,11 +280,25 @@ always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) sm_gbuf_waddr_token <= 'd0;
     else begin
         if (sm_state == MAX && max_cnt >= RLATENCY) sm_gbuf_waddr_token <= sm_gbuf_waddr_token + 'd1;
-        else if (sm_state == EU_STAGE_B && eu_stage_b_cnt >= RLATENCY + EU_LATENCY + OUT_LATENCY) sm_gbuf_waddr_token <= sm_gbuf_waddr_token + 'd1;
+        else if (sm_state == EU_STAGE_B) begin
+            if (eu_stage_b_cnt + 1 >= RLATENCY + EU_LATENCY + OUT_LATENCY && rw_toggle) sm_gbuf_waddr_token <= sm_gbuf_waddr_token + 'd1; // Only increment on Write cycles
+        end
         else sm_gbuf_waddr_token <= 'd0;
     end
 end
-assign sm_gbuf_wen = (sm_state == EU_STAGE_B && eu_stage_b_cnt >= RLATENCY + EU_LATENCY + OUT_LATENCY);
+// Interleaved Write Enable: Only valid when rw_toggle is 1 (Write cycle) during EU_STAGE_B
+always @(*) begin
+    // Account for interleaved cycles: each increment of eu_stage_b_cnt represents 2 cycles.
+    // The write should happen when the data from the Read cycle has arrived and been processed.
+    // Assuming RLATENCY is the read latency in clock cycles.
+    // We check if the total elapsed "interleaved cycles" (eu_stage_b_cnt * 2 + 1) is enough to cover RLATENCY + processing time.
+    // Also added upper bound check to avoid extra write cycle
+    sm_gbuf_wen = (sm_state == EU_STAGE_B && 
+                   eu_stage_b_cnt + 1 >= RLATENCY + EU_LATENCY + OUT_LATENCY && 
+                   eu_stage_b_cnt < spu_matrix_x_per_unit - 1 + RLATENCY + EU_LATENCY + OUT_LATENCY && 
+                   rw_toggle);
+end
+
 // rd_data received at RLATENCY, EU process needs 3 cycle, Multiply with reci needs 1 cycle, so the wen should be RLATENCY + 1 + 1
 // plus 1 more since output pulse
 assign sm_gbuf_waddr = sm_gbuf_waddr_token + sm_gbuf_waddr_sum;

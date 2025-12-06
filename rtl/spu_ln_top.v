@@ -46,10 +46,10 @@ module spu_ln_top #(
     input [4:0] ln_div_e,
 
     // fmbuf Interface definition
-    output ln_gbuf_ren, // gbuf read enable
+    output reg ln_gbuf_ren, // gbuf read enable
     output [ADDR_WIDTH-1:0] ln_gbuf_raddr, // gbuf read address, validated by ln_gbuf_ren
     input [DATA_WIDTH-1:0] ln_gbuf_rdata, // gbuf read data, 2cycle delay from ln_gbuf_ren
-    output ln_gbuf_wen, // gbuf write enable
+    output reg ln_gbuf_wen, // gbuf write enable
     output [ADDR_WIDTH-1:0] ln_gbuf_waddr, // gbuf write address, validated by ln_gbuf_wen
     output [DATA_WIDTH-1:0] ln_gbuf_wdata // gbuf write data, validated by ln_gbuf_wen
 );
@@ -62,7 +62,7 @@ localparam SQRT = 3'b100;
 localparam OUT = 3'b110;
 
 localparam OUT_COMP_LATENCY = 0;
-localparam SUM_COUNT_LATENCY = 1;
+localparam SUM_COUNT_LATENCY = 0;
 
 reg [2:0] ln_next_state, ln_state; // ln state machine signals
 
@@ -90,6 +90,9 @@ reg [ADDR_WIDTH-1:0] ln_gbuf_waddr_token; // basic addr to process 1 row (token)
 reg [ADDR_WIDTH-1:0] finish_token_cnt; // count finished rows (tokens), for state transition
 reg [2:0] rd_flag; // handle mutiple read loops in state SUM_COUNT and OUT
 
+// Toggle for interleaved read/write in OUT stage
+reg rw_toggle;
+
 // state transition
 always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) ln_state <= IDLE;
@@ -102,7 +105,10 @@ wire sum_count_tr = (sum_count_cnt == (spu_matrix_x_per_unit - 1 + SUM_COUNT_LAT
 wire sum_en = (ln_state == SUM_COUNT && sum_count_cnt >= RLATENCY + SUM_COUNT_LATENCY); // enbale accumulators
 wire sum_div_finish; // tranfer SUM_DIV to next state
 wire sqrt_reci_finish;
-wire out_tr = (out_cnt == (spu_matrix_x_per_unit - 1 + RLATENCY + OUT_COMP_LATENCY)); // when OUT ends, and transfer to next state, plus 2 since pulse 2 cycle
+// OUT transition needs to account for 2x cycles due to interleaved R/W
+// Adjusted threshold: -2 to match SM fix
+wire out_tr = (out_cnt == (spu_matrix_x_per_unit - 2 + RLATENCY + OUT_COMP_LATENCY)) && rw_toggle;
+
 // state transition conditions
 always @(*) begin
     case(ln_state)
@@ -167,11 +173,22 @@ always @(posedge core_clk or negedge rst_n) begin
     end
 end
 
+// rw_toggle control
+always @(posedge core_clk or negedge rst_n) begin
+    if (!rst_n) rw_toggle <= 1'b0; // Start with Read
+    else if (ln_state == OUT) begin
+        rw_toggle <= ~rw_toggle;
+    end
+    else begin
+        rw_toggle <= 1'b0;
+    end
+end
+
 always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) out_cnt <= 'd0;
     else if (ln_state == OUT) begin
         if (out_tr) out_cnt <= 'd0;
-        else out_cnt <= out_cnt + 'd1;
+        else if (rw_toggle) out_cnt <= out_cnt + 'd1; // Increment only after Write cycle
     end
 end
 
@@ -198,7 +215,7 @@ always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) rd_flag <= 3'b000;
     else begin
         if (ln_state == SUM_COUNT && rd_flag == 3'b001 && ln_gbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b010; // max lock
-        else if (ln_state == OUT && rd_flag == 3'b011 && ln_gbuf_raddr_token == spu_matrix_x_per_unit - 1) rd_flag <= 3'b000; // max lock
+        else if (ln_state == OUT && rd_flag == 3'b011 && ln_gbuf_raddr_token == spu_matrix_x_per_unit - 1 && !rw_toggle) rd_flag <= 3'b000; // max lock - wait for last read
         else if (ln_next_state == SUM_COUNT && rd_flag == 3'b000) rd_flag <= 3'b001;
         else if (ln_next_state == OUT && rd_flag == 3'b010) rd_flag <= 3'b011;
         else if (ln_state == IDLE) rd_flag <= 3'b000;
@@ -215,8 +232,8 @@ always @(posedge core_clk or negedge rst_n) begin
                 else if (rd_flag == 3'b001) ln_gbuf_raddr_token <= ln_gbuf_raddr_token + 'd1;
             end
             OUT: begin
-                if (ln_gbuf_raddr_token == spu_matrix_x_per_unit - 1) ln_gbuf_raddr_token <= 'd0;
-                else if (rd_flag == 3'b011) ln_gbuf_raddr_token <= ln_gbuf_raddr_token + 'd1;
+                if (ln_gbuf_raddr_token == spu_matrix_x_per_unit - 1 && !rw_toggle) ln_gbuf_raddr_token <= 'd0;
+                else if (rd_flag == 3'b011 && !rw_toggle) ln_gbuf_raddr_token <= ln_gbuf_raddr_token + 'd1; // Only increment on Read cycles
             end
             IDLE: ln_gbuf_raddr_token <= 'd0;
         endcase
@@ -226,23 +243,33 @@ end
 always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) ln_gbuf_waddr_token <= 'd0;
     else begin
-        if (ln_state == OUT && out_cnt >= RLATENCY + OUT_COMP_LATENCY) ln_gbuf_waddr_token <= ln_gbuf_waddr_token + 'd1; // plus 2 since pluse 2
+        if (ln_state == OUT) begin
+             if (out_cnt + 1 >= RLATENCY + OUT_COMP_LATENCY && rw_toggle) ln_gbuf_waddr_token <= ln_gbuf_waddr_token + 'd1;
+        end
         else ln_gbuf_waddr_token <= 'd0;
     end
 end
 
-assign ln_gbuf_ren = (ln_state == SUM_COUNT && rd_flag == 3'b001) || (ln_state == OUT && rd_flag == 3'b011);
 assign ln_gbuf_raddr = ln_gbuf_raddr_token + ln_gbuf_raddr_sum;
+always @(*) begin
+    ln_gbuf_ren = (ln_state == SUM_COUNT && rd_flag == 3'b001) || (ln_state == OUT && rd_flag == 3'b011 && !rw_toggle);
+end
 
 always @(posedge core_clk or negedge rst_n) begin
     if (!rst_n) finish_token_cnt <= 'd0;
     else if (ln_state == OUT) begin
-        if (out_cnt == spu_matrix_x_per_unit - 1 + RLATENCY) finish_token_cnt <= finish_token_cnt + 'd1;
+        if (out_cnt == spu_matrix_x_per_unit - 2 + RLATENCY + OUT_COMP_LATENCY && ~rw_toggle) finish_token_cnt <= finish_token_cnt + 'd1;
     end
     else if (ln_state == IDLE) finish_token_cnt <= 'd0;
 end
 
-assign ln_gbuf_wen = (ln_state == OUT && out_cnt >= RLATENCY + OUT_COMP_LATENCY);
+always @(*) begin
+    ln_gbuf_wen = (ln_state == OUT && 
+                   out_cnt + 1 >= RLATENCY + OUT_COMP_LATENCY && 
+                   out_cnt < spu_matrix_x_per_unit - 1 + RLATENCY + OUT_COMP_LATENCY && 
+                   rw_toggle);
+end
+
 assign ln_gbuf_waddr = ln_gbuf_waddr_token + ln_gbuf_waddr_sum;
 
 // ln processing block instances

@@ -304,22 +304,22 @@ def spu_test(matrix_y, matrix_x, scale1, scale0, scale_exp, mode, input_lowerbou
 
 if __name__ == "__main__":
     print("Loop test of Special PU Starts")
-    mode = 1  # mode 0: SoftMax; 1: LayerNorm
+    mode = 0  # mode 0: SoftMax; 1: LayerNorm
 
     # matrix configuration for softmax
     matrix_y_list_sm = [1, 5]
-    matrix_x_list_sm = [8, 64]  # from segformer_b0 quantization version, with 512 x 480
+    matrix_x_list_sm = [4, 8, 64]  # from segformer_b0 quantization version, with 512 x 480
     scales_list_sm = [(2 ** -3, 2 ** -5, 2 ** -12),
                         (2 ** -3, 2 ** -5, 2 ** -9),
                         (2 ** -2, 2 ** -6, 2 ** -10),
                         (2 ** -0, 2 ** -7, 2 ** -10)]
-    scales_list_sm = [(2 ** -3, 2 ** -5, 2 ** -7)]
+    # scales_list_sm = [(2 ** -3, 2 ** -5, 2 ** -7)]
                      
     # matrix configuration for layernorm
     matrix_y_list_ln = [1, 5]
-    matrix_x_list_ln = [8, 64]  # from segformer_b0 quantization version, with 512 x 480
+    matrix_x_list_ln = [4, 8, 64]  # from segformer_b0 quantization version, with 512 x 480
     scales_list_ln = [2 ** -9, 2 ** -6,  2 ** -4, 2 ** -2]  # from segformer_b0 quantization version, with 512 x 480
-    scales_list_ln = [2 ** -6]
+    # scales_list_ln = [2 ** -6]
 
     if mode == 0:
         matrix_y_list = matrix_y_list_sm

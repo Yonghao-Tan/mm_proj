@@ -20,7 +20,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-
 module spu_ln_block(
     input core_clk,
     input rst_n,
@@ -65,25 +64,18 @@ end
 // var(x) = E(x^2) - E^2(x)
 // E(x) = mean(sum(x)), process sum(x) here: 8 inputs in one group per cycle
 wire signed [8-1+1+1:0] ln_sumx_process_data = ln_process_data_0+ln_process_data_1+ln_process_data_2+ln_process_data_3;
-reg signed [8-1+1+1:0] ln_sumx_process_data_reg;
-always @(posedge core_clk or negedge rst_n) begin
-    if (~rst_n) ln_sumx_process_data_reg <= 'd0;
-    else if (ln_state == SUM_COUNT) ln_sumx_process_data_reg <= ln_sumx_process_data;
-end
+// Changed to combinational logic, skipping register
+wire signed [8-1+1+1:0] ln_sumx_process_data_reg = ln_sumx_process_data;
+
 // pipeline 2, < 128chars per line
 // E(x^2) = mean(sum(x^2)), process sum(x^2) here
-reg [16:0] ln_x2_stage_1_0, ln_x2_stage_1_1;
+// reg [16:0] ln_x2_stage_1_0, ln_x2_stage_1_1;
+wire [16:0] ln_x2_stage_1_0, ln_x2_stage_1_1;
 wire [17:0] ln_x2_process_data;
-always @(posedge core_clk or negedge rst_n) begin
-    if (~rst_n) begin
-        ln_x2_stage_1_0 <= 'd0;
-        ln_x2_stage_1_1 <= 'd0;
-    end
-    else if (ln_state == SUM_COUNT) begin
-        ln_x2_stage_1_0 <= ln_process_data_0*ln_process_data_0+ln_process_data_1*ln_process_data_1;
-        ln_x2_stage_1_1 <= ln_process_data_2*ln_process_data_2+ln_process_data_3*ln_process_data_3;
-    end
-end
+// Changed to combinational logic
+assign ln_x2_stage_1_0 = ln_process_data_0*ln_process_data_0+ln_process_data_1*ln_process_data_1;
+assign ln_x2_stage_1_1 = ln_process_data_2*ln_process_data_2+ln_process_data_3*ln_process_data_3;
+
 assign ln_x2_process_data = ln_x2_stage_1_0 + ln_x2_stage_1_1;
 
 // definition of sum registors
@@ -251,25 +243,6 @@ wire signed [7:0] ln_initial_norm_q_1 = ln_clamp_neg_flag_1 ? -8'd128 : ln_clamp
 wire signed [7:0] ln_initial_norm_q_2 = ln_clamp_neg_flag_2 ? -8'd128 : ln_clamp_pos_flag_2 ? 8'd127 : quotient_out_2[30] ? ln_q_neg_round_2 : ln_q_pos_round_2;
 wire signed [7:0] ln_initial_norm_q_3 = ln_clamp_neg_flag_3 ? -8'd128 : ln_clamp_pos_flag_3 ? 8'd127 : quotient_out_3[30] ? ln_q_neg_round_3 : ln_q_pos_round_3;
 
-// pulse 1 cycle at output
-// reg signed [8-1:0] ln_out_data_0;
-// reg signed [8-1:0] ln_out_data_1;
-// reg signed [8-1:0] ln_out_data_2;
-// reg signed [8-1:0] ln_out_data_3;
-// always @(posedge core_clk or negedge rst_n) begin
-//     if (~rst_n) begin
-//         ln_out_data_0 <= 'd0;
-//         ln_out_data_1 <= 'd0;
-//         ln_out_data_2 <= 'd0;
-//         ln_out_data_3 <= 'd0;
-//     end
-//     else if (ln_state == OUT) begin
-//         ln_out_data_0 <= ln_initial_norm_q_0;
-//         ln_out_data_1 <= ln_initial_norm_q_1;
-//         ln_out_data_2 <= ln_initial_norm_q_2;
-//         ln_out_data_3 <= ln_initial_norm_q_3;
-//     end
-// end
 wire signed [8-1:0] ln_out_data_0 = ln_initial_norm_q_0;
 wire signed [8-1:0] ln_out_data_1 = ln_initial_norm_q_1;
 wire signed [8-1:0] ln_out_data_2 = ln_initial_norm_q_2;

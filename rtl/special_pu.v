@@ -53,15 +53,9 @@ module special_pu #(
     input [4:0] ln_div_e_in,
 
     // // buffer Interface definition
-    // output gbuf_cen,
-    // output gbuf_wen,
-    // output [ADDR_WIDTH-1:0] gbuf_addr,
-    // output [DATA_WIDTH-1:0] gbuf_din,
-    // input [DATA_WIDTH-1:0] gbuf_dout
     output gbuf_cen,
     output gbuf_wen,
-    output [ADDR_WIDTH-1:0] gbuf_waddr,
-    output [ADDR_WIDTH-1:0] gbuf_raddr,
+    output [ADDR_WIDTH-1:0] gbuf_addr,
     output [DATA_WIDTH-1:0] gbuf_din,
     input [DATA_WIDTH-1:0] gbuf_dout
 );
@@ -202,9 +196,9 @@ wire [DATA_WIDTH-1:0] gbuf_wdata_tmp = spu_op ? ln_gbuf_wdata : sm_gbuf_wdata;
 
 assign gbuf_cen = ~(gbuf_ren_tmp || gbuf_wen_tmp);
 assign gbuf_wen = ~gbuf_wen_tmp;
-// assign gbuf_addr = gbuf_ren_tmp ? gbuf_raddr_tmp : gbuf_waddr_tmp;
-assign gbuf_raddr = gbuf_raddr_tmp;
-assign gbuf_waddr = gbuf_waddr_tmp;
+assign gbuf_addr = gbuf_ren_tmp ? gbuf_raddr_tmp : gbuf_waddr_tmp;
+// assign gbuf_raddr = gbuf_raddr_tmp;
+// assign gbuf_waddr = gbuf_waddr_tmp;
 assign gbuf_din = gbuf_wdata_tmp;
 
 assign spu_end = spu_op ? ln_end : sm_end;

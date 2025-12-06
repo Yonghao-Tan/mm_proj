@@ -2,9 +2,6 @@
 
 
 module spu_sm_expu_pwl(
-	input core_clk,
-	input rst_n,
-	input [2:0] sm_state,
 	input signed [8:0] break_points_q_0,
 	input signed [8:0] break_points_q_1,
 	input signed [8:0] break_points_q_2,

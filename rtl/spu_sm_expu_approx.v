@@ -149,9 +149,6 @@ assign coeff_q_6 = coeff_q[6];
 assign coeff_q_7 = coeff_q[7]; 
 
 spu_sm_expu_pwl u_spu_sm_expu_pwl_0(
-    .core_clk(core_clk),
-    .rst_n(rst_n),
-    .sm_state(sm_state),
     .din_q(din_q_0),
     .dout_q(dout_q_0),
     .break_points_q_0(break_points_q_0),
@@ -181,9 +178,6 @@ spu_sm_expu_pwl u_spu_sm_expu_pwl_0(
 );
 
 spu_sm_expu_pwl u_spu_sm_expu_pwl_1(
-    .core_clk(core_clk),
-    .rst_n(rst_n),
-    .sm_state(sm_state),
     .din_q(din_q_1),
     .dout_q(dout_q_1),
     .break_points_q_0(break_points_q_0),
@@ -213,9 +207,6 @@ spu_sm_expu_pwl u_spu_sm_expu_pwl_1(
 );
 
 spu_sm_expu_pwl u_spu_sm_expu_pwl_2(
-    .core_clk(core_clk),
-    .rst_n(rst_n),
-    .sm_state(sm_state),
     .din_q(din_q_2),
     .dout_q(dout_q_2),
     .break_points_q_0(break_points_q_0),
@@ -245,9 +236,6 @@ spu_sm_expu_pwl u_spu_sm_expu_pwl_2(
 );
 
 spu_sm_expu_pwl u_spu_sm_expu_pwl_3(
-    .core_clk(core_clk),
-    .rst_n(rst_n),
-    .sm_state(sm_state),
     .din_q(din_q_3),
     .dout_q(dout_q_3),
     .break_points_q_0(break_points_q_0),
